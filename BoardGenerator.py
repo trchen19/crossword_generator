@@ -1,31 +1,68 @@
-class Board:
-    def __init__(self, pattern):3
-        self.pattern = pattern
-        self.word_lst = []
+import Board
 
-class Tile:
-    def __init__(self, location, intersection):
-        self.location = location
-        self.instantiated = False
-        self.letter = None
-        self.intersection = intersection
-        self.clue_num = 0
+def get_wordPatterns(tiling):
+    # Find wordPatterns 
+    d = len(tiling)
 
-    def set_instantiated(self, bool):
-        self.instantiated = bool
-    
-    def get_instantiated(self):
-        return self.instantiated
+    #list of starting and ending locations of each word pattern
+    #problem: how to determine end and beginning? across? Down?
+    wordPatterns = []
 
-    def set_letter(self, letter):
-        self.letter = letter
-    
-    def get_letter(self):
-        return self.letter
-    
-    def set_clue_num(self, clue_num):
-        self.instantiated = bool
-    
-    def get_clue_num(self):
-        return self.clue_num
-    
+    # find patterns in every row (i.e. across word patterns)
+    for i in range(d):
+        started = False
+        patternLen = 0
+        startLoc = None
+        for j in range(d):
+            if tiling[i][j] and not started:
+                started = True
+                patternLen = 1
+                startLoc = (i,j)
+            elif tiling[i][j] and started:
+                patternLen += 1
+            elif not tiling[i][j] and started:
+                started = False
+                patternLen = 0
+            if patternLen != 1: 
+                wordPatterns.append( (startLoc, (i, j) ) )
+                startLoc = None
+
+    # find patterns in every row (i.e. down word patterns)
+    for j in range(d):
+        started = False
+        patternLen = 0
+        startLoc = None
+        for i in range(d):
+            if tiling[i][j] and not started:
+                started = True
+                patternLen = 1
+                startLoc = (i,j)
+            elif tiling[i][j] and started:
+                patternLen += 1
+            elif not tiling[i][j] and started:
+                started = False
+                patternLen = 0
+            if patternLen != 1: 
+                wordPatterns.append( (startLoc, (i, j) ) )
+                startLoc = None
+    return wordPatterns
+
+def get_Tiles(tiling):
+    # Create list of tiles
+    tileLst = []
+
+    for i in range(d):
+        for j in range(d):
+            if tiling[i][j]:
+                location = (i, j)
+                #need to figure out if a tile is an intersection or not
+                # tileLst.append(new Tile(location, False, None, ))
+        
+# list of all words being considered in queries
+openList = []
+
+# list containing (word, clue)
+clue = []
+
+def if __name__ == "__main__":
+    wordPatterns = get_wordPatterns(tiling)
