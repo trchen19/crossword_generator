@@ -1,12 +1,12 @@
 import Board
 
+wordPatterns = []
+acrossPatterns = []
+downPatterns = []
+
 def get_wordPatterns(tiling):
     # Find wordPatterns 
     d = len(tiling)
-
-    #list of starting and ending locations of each word pattern
-    #problem: how to determine end and beginning? across? Down?
-    wordPatterns = []
 
     # find patterns in every row (i.e. across word patterns)
     for i in range(d):
@@ -24,7 +24,9 @@ def get_wordPatterns(tiling):
                 started = False
                 patternLen = 0
             if patternLen != 1: 
-                wordPatterns.append( (startLoc, (i, j) ) )
+                endLoc = (i, j)
+                wordPatterns.append( (startLoc, endLoc ) )
+                acrossPatterns.append( (startLoc, endLoc) )
                 startLoc = None
 
     # find patterns in every row (i.e. down word patterns)
@@ -43,9 +45,44 @@ def get_wordPatterns(tiling):
                 started = False
                 patternLen = 0
             if patternLen != 1: 
-                wordPatterns.append( (startLoc, (i, j) ) )
+                endLoc = (i, j)
+                wordPatterns.append( (startLoc, endLoc ) )
+                downPatterns.append( (startLoc, endLoc) )
+
                 startLoc = None
-    return wordPatterns
+
+def determine_intersection(i, j):
+    in_across = False
+    in_down = False
+    # Check across patterns
+    for startLoc, endLoc in acrossPatterns:
+        x = startLoc[0]
+        start_y = startLoc[1]
+        end_y = endLoc[1]
+
+        if i == x:
+            if j >= start_y and j <= end_y:
+                in_across = True
+        else:
+            continue 
+    
+    # Check down patterns
+    for startLoc, endLoc in downPatterns:
+        y = startLoc[1]
+        start_x = startLoc[0]
+        end_x = endLoc[0]
+
+        if j == y:
+            if i >= start_x and i <= end_x:
+                in_down = True
+        else:
+            continue 
+    
+    return in_down and in_across
+
+def get_clue(i, j):
+    #TODO:
+    pass 
 
 def get_Tiles(tiling):
     # Create list of tiles
@@ -55,14 +92,15 @@ def get_Tiles(tiling):
         for j in range(d):
             if tiling[i][j]:
                 location = (i, j)
-                #need to figure out if a tile is an intersection or not
-                # tileLst.append(new Tile(location, False, None, ))
+                intersection = determine_intersection(i, j)
+                clueNum = get_clue(i, j)
+                tileLst.append(Tile(location, False, None, interesection, clueNum))
         
-# list of all words being considered in queries
-openList = []
+    # list of all words being considered in queries
+    openList = []
 
-# list containing (word, clue)
-clue = []
+    # list containing (word, clue)
+    clue = []
 
 def if __name__ == "__main__":
-    wordPatterns = get_wordPatterns(tiling)
+    get_wordPatterns()
