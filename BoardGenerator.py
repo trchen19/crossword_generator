@@ -3,6 +3,13 @@ import Board
 wordPatterns = []
 acrossPatterns = []
 downPatterns = []
+    
+# list of all words being considered in queries
+openList = []
+
+# list containing (word, clue)
+clue = []
+
 
 def get_wordPatterns(tiling):
     # Find wordPatterns 
@@ -80,27 +87,32 @@ def determine_intersection(i, j):
     
     return in_down and in_across
 
-def get_clue(i, j):
-    #TODO:
-    pass 
+def get_clue(i, j, lastClue):
+    for startLoc, _ in acrossPatterns:
+        if (i,j) == startLoc:
+            lastClue += 1
+            return lastClue
+    for startLoc, _ in downPatterns:
+        if (i,j) == startLoc:
+            lastClue += 1
+            return lastClue
+    
 
 def get_Tiles(tiling):
     # Create list of tiles
     tileLst = []
-
+    lastClue = 0
     for i in range(d):
         for j in range(d):
             if tiling[i][j]:
                 location = (i, j)
                 intersection = determine_intersection(i, j)
-                clueNum = get_clue(i, j)
-                tileLst.append(Tile(location, False, None, interesection, clueNum))
-        
-    # list of all words being considered in queries
-    openList = []
-
-    # list containing (word, clue)
-    clue = []
+                clueNum = get_clue(i, j, lastClue)
+                if clueNum > lastClue:
+                    tileLst.append(Tile(location, False, None, interesection, clueNum))
+                else: 
+                    print("This tile does not start a word Pattern")
+    return tileLst
 
 def if __name__ == "__main__":
     get_wordPatterns()
