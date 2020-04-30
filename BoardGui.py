@@ -1,8 +1,9 @@
 import PySimpleGUI as sg
 import random
 import string
-# import BoardGenerator
+import BoardGenerator
 
+DEBUG = False
 BOX_SIZE = 25
 
 layout = [
@@ -21,28 +22,76 @@ g = window['graph']
 '''
 # tiling = input("Please enter valid nxn 2D array: ")
 ## Insert input validation check here!! 
-tiling = [[1,0],[0,1]]
+# tiling = [[1,1,1,1,1], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0]]
+# tiling = [[1,0,0,0,0], [1,0,0,0,0], [1,0,0,0,0], [1,0,0,0,0],[1,0,0,0,0]]
+# tiling = [[1,1,1,1,1], [1,0,0,0,0], [1,0,0,0,0], [1,0,0,0,0],[1,0,0,0,0]]
+# tiling = [[1,1,1,1,1], [0,0,1,0,0], [0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0]]
+# tiling = [[1,1,1,1,1], [0,0,1,0,0], [1,1,0,1,1],[0,0,1,0,0],[0,0,1,0,0]]
+# tiling = [[1,1,1,1,1], [0,0,1,0,0], [1,1,0,1,1],[1,0,1,0,0],[1,0,1,0,0]] 
+tiling = [[1,0,0,0,0,0,1,1,0,0],
+          [1,0,0,1,0,0,1,0,0,0],
+          [1,1,1,1,1,1,1,0,0,0],
+          [1,0,0,1,0,0,0,0,0,0],
+          [1,0,0,1,1,1,1,0,0,0],
+          [1,0,0,0,0,1,0,0,0,0],
+          [0,0,0,0,0,1,0,0,0,0],
+          [0,0,0,0,0,1,0,0,0,0],
+          [0,0,0,1,1,1,1,1,0,0],
+          [0,0,0,0,0,1,0,0,0,0],
+        ] #Jo's tiling
+
 
 '''
 <<<<<<<<<<<<<<<<<<Call BoardGenerator Functions: Generate Crossword Here>>>>>>>>>>>>>>>>>>>>
 '''
+    
+# list of all words being considered in queries
+openList = []
 
+# list containing (word, clue)
+clue = []
+
+wordPatterns = BoardGenerator.get_wordPatterns(tiling)
+
+if DEBUG: 
+    print("ALL Patterns ...")
+    print(wordPatterns)
+    print("ACROSS ...")
+    print(acrossPatterns)
+    print("DOWN ...")
+    print(downPatterns)
+    print("-----------------------------")
+
+d = len(tiling)
+
+if DEBUG:
+    for i in range(d):
+        for j in range(d):
+            print("LOCATION: " + str(i) + ", " + str(j) + " ..... INTERSECTION: " + str(BoardGenerator.determine_intersection(i,j,acrossPatterns,downPatterns)))
+
+tileDict = BoardGenerator.get_Tiles(tiling, wordPatterns)
+
+if DEBUG:
+    for tile in tileDict.values():
+        tile.print_tileInfo()
+
+print(tileDict)
 for row in range(len(tiling)):
     for col in range(len(tiling[0])):
+        currTile = None
         if tiling[row][col]:
             # Draw all white Tiles
             g.draw_rectangle((col * BOX_SIZE + 5, row * BOX_SIZE + 3), (col * BOX_SIZE + BOX_SIZE + 5, row * BOX_SIZE + BOX_SIZE + 3), line_color='black')
+            currTile = tileDict[(row, col)]
+            # Draw clue number if needed in a given tile
+            if currTile.get_tile_clue() != 0:
+                g.draw_text( str(currTile.get_tile_clue()),
+                            (col * BOX_SIZE + 10, row * BOX_SIZE + 8))
         else:
             # Blackout box if not valid tile
             g.draw_rectangle((col * BOX_SIZE + 5, row * BOX_SIZE + 3), (col * BOX_SIZE + BOX_SIZE + 5, row * BOX_SIZE + BOX_SIZE + 3), line_color='black', fill_color='black')
 
-        # Draw clue number if needed in a given tile
-        g.draw_text('{}'.format(row * 6 + col + 1),
-                    (col * BOX_SIZE + 10, row * BOX_SIZE + 8))
-
-
 # Start event loop
-
 while True:             
     event, values = window.read()
     print(str(event) + " AND " + str(values))
