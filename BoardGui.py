@@ -2,6 +2,7 @@ import PySimpleGUI as sg
 import random
 import string
 import BoardGenerator
+import UpdateBoard
 
 DEBUG = False
 BOX_SIZE = 25
@@ -51,31 +52,44 @@ openList = []
 # list containing (word, clue)
 clue = []
 
+'''
+    Find all Word Patterns
+'''
 wordPatterns = BoardGenerator.get_wordPatterns(tiling)
+
+'''
+    Set Freedoms of all word patterns
+'''
+UpdateBoard.set_freedom(wordPatterns)
 
 if DEBUG: 
     print("ALL Patterns ...")
     print(wordPatterns)
-    print("ACROSS ...")
-    print(acrossPatterns)
-    print("DOWN ...")
-    print(downPatterns)
     print("-----------------------------")
 
+'''
+    Create Tile objects for each box
+'''
 d = len(tiling)
 
 if DEBUG:
     for i in range(d):
         for j in range(d):
-            print("LOCATION: " + str(i) + ", " + str(j) + " ..... INTERSECTION: " + str(BoardGenerator.determine_intersection(i,j,acrossPatterns,downPatterns)))
+            print("LOCATION: " + str(i) + ", " + str(j) + " ..... INTERSECTION: " + str(BoardGenerator.determine_intersection(i,j, wordPatterns)))
 
-tileDict = BoardGenerator.get_Tiles(tiling, wordPatterns)
+tileDict, intersectionDict = BoardGenerator.get_Tiles(tiling, wordPatterns)
 
 if DEBUG:
     for tile in tileDict.values():
         tile.print_tileInfo()
 
 print(tileDict)
+print(intersectionDict)
+'''
+    Get the seed for instantiation
+'''
+wp_idx = UpdateBoard.get_seed(wordPatterns, tileDict)
+
 for row in range(len(tiling)):
     for col in range(len(tiling[0])):
         currTile = None

@@ -1,4 +1,4 @@
-from Tile import Tile
+from Tile import Tile, WordPattern
 debug = False
 
 def get_wordPatterns(tiling):
@@ -28,7 +28,7 @@ def get_wordPatterns(tiling):
             elif tiling[i][j] and patternLen > 0:
                 patternLen += 1
             elif not tiling[i][j] and patternLen > 1:
-                wordPatterns.append( (startLoc, "across", patternLen, freedom) )
+                wordPatterns.append( WordPattern(startLoc, "across", patternLen, freedom) )
                 startLoc = None
                 patternLen = 0
             else:
@@ -36,7 +36,7 @@ def get_wordPatterns(tiling):
                 patternLen = 0
 
             if j == d-1 and patternLen > 1:
-                wordPatterns.append( (startLoc, "across", patternLen, freedom) )
+                wordPatterns.append( WordPattern(startLoc, "across", patternLen, freedom) )
 
 
     # find patterns in every down (i.e. down word patterns)
@@ -51,7 +51,7 @@ def get_wordPatterns(tiling):
             elif tiling[i][j] and patternLen > 0:
                 patternLen += 1
             elif not tiling[i][j] and patternLen > 1:
-                wordPatterns.append( (startLoc, "down", patternLen, freedom) )
+                wordPatterns.append( WordPattern(startLoc, "down", patternLen, freedom) )
                 startLoc = None
                 patternLen = 0
             else:
@@ -59,39 +59,44 @@ def get_wordPatterns(tiling):
                 patternLen = 0
 
             if i == d-1 and patternLen > 1:
-                wordPatterns.append( (startLoc, "down", patternLen, freedom) )
+                wordPatterns.append( WordPattern(startLoc, "down", patternLen, freedom) )
 
     return wordPatterns
 
 def determine_intersection(i, j, wpLst):
     in_across = False
     in_down = False
+    pattern_across = None
+    pattern_down = None
 
     for pattern in wpLst:
-        startLoc = pattern[0]
+        startLoc = pattern.get_startLoc()
+        length = pattern.get_length()
         x = startLoc[0]
         y = startLoc[1]
 
-        if pattern[1] == "across":
-            end_y = y + pattern[2]
+        if pattern.get_direction() == "across":
+            end_y = y + length
             if i == x:
                 if j >= y and j <= end_y:
                     in_across = True
+                    pattern_across = pattern
             else:
                 continue     
         else:
-            end_x = x + pattern[2]
+            end_x = x + length
             if j == y:
                 if i >= x and i <= end_x:
                     in_down = True
+                    pattern_down = pattern
             else:
                 continue    
  
-    return in_down and in_across
+    return in_down and in_across, pattern_across, pattern_down
 
 def get_clue(i, j, lastClue, wpLst):
     for pattern in wpLst:
-        if (i,j) == pattern[0]:
+        if (i,j) == pattern.get_startLoc():
             nextClue = lastClue + 1
             return nextClue
     return lastClue
@@ -101,12 +106,15 @@ def get_Tiles(tiling, wordPatterns):
     d = len(tiling)
 
     tileDict = {}
+    intersectionDict = {}
     lastClue = 0
     for i in range(d):
         for j in range(d):
             if tiling[i][j]:
                 location = (i, j)
-                intersection = determine_intersection(i, j, wordPatterns)
+                intersection, p_across, p_down = determine_intersection(i, j, wordPatterns)
+                if intersection:
+                    intersection[(i,j)] = [p_across, p_down]
                 clueNum = get_clue(i, j, lastClue, wordPatterns)
                 if clueNum > lastClue:
                     t = Tile(location, False, None, intersection, clueNum)
@@ -115,4 +123,4 @@ def get_Tiles(tiling, wordPatterns):
                 else: 
                     t = Tile(location, False, None, intersection, 0)
                     tileDict[(i,j)] = t
-    return tileDict
+    return tileDict, intersectionDict

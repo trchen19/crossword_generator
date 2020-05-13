@@ -1,10 +1,9 @@
 class InfoStructure: 
-    def __init__(self, word, resultSize, openLstPos, acrossBool, wordLstPos):
+    def __init__(self, word, resultSize, openLstPos, pattern):
         self.word = word
         self.resultSize = resultSize
         self.openLstPos = openLstPos
-        self.acrossBool = acrossBool
-        self.wordLstPos = wordLstPos
+        self.pattern = pattern
     
     '''
         Getters
@@ -18,11 +17,8 @@ class InfoStructure:
     def get_openLstPos(self):
         return self.openLstPos
 
-    def get_acrossBool(self):
-        return self.acrossBool
-
-    def get_wordLstPos(self):
-        return self.wordLstPos
+    def get_pattern(self):
+        return self.pattern
 
     ''''
         Setters
@@ -38,7 +34,6 @@ class Tile:
         self.letter = letter
         self.intersection = intersection
         self.clueNum = clueNum
-
 
     ''''
         Getters
@@ -79,3 +74,51 @@ class Tile:
         print("Intersection: " + str(self.intersection))
         print("Clue Number: " + str(self.clueNum))
         print("-------------------------------------------")
+
+class WordPattern:
+    def __init__(self, startLoc, direction, length, freedom):
+        self.startLoc = startLoc
+        self.direction = direction
+        self.length = length
+        self.freedom = freedom 
+
+    '''
+        Getters
+    '''
+    def get_startLoc(self):
+        return self.startLoc
+
+    def get_direction(self):
+        return self.direction
+
+    def get_length(self):
+        return self.length
+    
+    def get_freedom(self):
+        return self.freedom
+
+    '''
+        Setters
+    '''
+    def set_startLoc(self, x, y):
+        self.startLoc = (x, y)
+
+    def set_direction(self, direction):
+        self.direction = direction
+
+    def set_length(self, length):
+        self.length = length
+    
+    def set_freedom(self, freedom):
+        self.freedom = freedom
+
+    '''
+        Debugging Print
+    '''
+
+    def print_pattern(self):
+        print("starting location: " + str(self.startLoc))
+        print("direction: " + self.direction)
+        print("length: " + str(self.length))
+        print("freedom: " + str(self.freedom))
+        print()
