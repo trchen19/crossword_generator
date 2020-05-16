@@ -10,29 +10,30 @@ mydb = mysql.connector.connect(
 
 mycursor = mydb.cursor()
 
-DEBUG = True
+DEBUG = False
 
 def query_wordpattern(pattern, regex=None):
     patternLen = pattern.get_length()
 
     table = "words_" + str(patternLen)
 
-    sql = "SELECT * FROM "+ table + " ORDER BY RAND() LIMIT 250"
+    sql = "SELECT * FROM "+ table + " ORDER BY RAND() LIMIT 300"
 
-    if regex is not None: 
-        sql = "SELECT * FROM "+ table + " WHERE term REGEXP '"+ regex + "' ORDER BY RAND() LIMIT 250"
+    if regex is not None:
+        sql = "SELECT * FROM "+ table + " WHERE term REGEXP '"+ regex + "' ORDER BY RAND() LIMIT 300"
 
     if DEBUG:
         print()
         print(regex)
         print(sql)
-    
+
     try:
         mycursor.execute(sql)
+        return mycursor.fetchall()
     except:
         print("COULDN'T QUERY TABLE: " + table)
 
-    return mycursor.fetchall()
+    return None
 
 def set_freedom(wordPatterns):
     if DEBUG:
@@ -56,22 +57,25 @@ def get_freedom(pattern, regex=None):
     if DEBUG:
         print(regex)
 
-    if regex is not None: 
-        sql = "SELECT COUNT(*) FROM "+ table + " WHERE term REGEXP '"+ regex + "'" 
-        
+    if regex is not None:
+        sql = "SELECT COUNT(*) FROM "+ table + " WHERE term REGEXP '"+ regex + "'"
+
     try:
         mycursor.execute(sql)
+        (freedom,) = mycursor.fetchone()
+        if DEBUG:
+            print("FREEDOM: " + str(freedom))
+        return freedom
     except:
         print("COULDN'T QUERY TABLE: " + table)
-    
-    (freedom,) = mycursor.fetchone()
 
-    if DEBUG:
-        print("FREEDOM: " + str(freedom))
-    return freedom
+
+
+    return None
+
 
 def get_seed(wordPatterns, tileDict):
-    # Find word pattern with the most intersections 
+    # Find word pattern with the most intersections
     most_intersect = 0
     most_idx = -1
     count = 0
@@ -84,7 +88,7 @@ def get_seed(wordPatterns, tileDict):
         numIntersection = 0
         patternLen = pattern.get_length()
 
-        #count number of intersections 
+        #count number of intersections
         startLoc = pattern.get_startLoc()
         x = startLoc[0]
         y = startLoc[1]
@@ -99,7 +103,7 @@ def get_seed(wordPatterns, tileDict):
                 tile = tileDict[(x+i, y)]
                 if tile.is_intersection():
                     numIntersection += 1
-        
+
         if numIntersection > most_intersect:
             most_intersect = numIntersection
             most_idx = count
@@ -111,8 +115,8 @@ def get_seed(wordPatterns, tileDict):
     return pattern, results
 
 def get_ratio(start_x, start_y, direction, length, lst, tileDict):
-    
-    if DEBUG: 
+
+    if DEBUG:
         print("**************************")
         print("GETTING RATIO")
     num_letters = 0
@@ -122,24 +126,23 @@ def get_ratio(start_x, start_y, direction, length, lst, tileDict):
             loc = (start_x, start_y+i)
             tile = tileDict[loc]
             if tile.get_tile_state():
-                lst.append(tile.get_tile_letter()) 
+                lst.append(tile.get_tile_letter())
                 num_letters += 1
             else:
-                lst.append(None)               
-    else: 
+                lst.append(None)
+    else:
         for i in range(length):
             loc = (start_x+i, start_y)
             tile = tileDict[loc]
             if tile.get_tile_state():
-                lst.append(tile.get_tile_letter()) 
+                lst.append(tile.get_tile_letter())
                 num_letters += 1
             else:
-                lst.append(None)           
-    
+                lst.append(None)
     return num_letters/length
 
 def build_regex(letter_lst):
-    if DEBUG: 
+    if DEBUG:
         print("-----------------------")
         print("BUILDING REGEX")
         print(letter_lst)
@@ -180,6 +183,10 @@ def change_last_pattern(closedList, tileDict, intersectionDict, clues):
     while in_clues:
         if not results:
             if DEBUG:
+                print("?!?!?!??!?!?!?!?!?!?!?!?!?")
+                print("CLUE LIST")
+                print("?!?!?!??!?!?!?!?!?!?!?!?!?")
+                print(clues)
                 print("CHANGE LAST PATTERN: all words used")
             return False
 
@@ -189,13 +196,12 @@ def change_last_pattern(closedList, tileDict, intersectionDict, clues):
             in_clues = False
         else:
             results.remove((word, clue))
-    
+
     closedList.set_results(results)
-    clues.append(results[-1])
     word = results[-1][0]
     pattern.set_clue(results[-1][1])
     if DEBUG:
-        print("NEW WORD: "+ word)   
+        print("NEW WORD: "+ word)
     # Set tiles with given word
     startLoc = pattern.get_startLoc()
     start_x = startLoc[0]
@@ -219,10 +225,17 @@ def change_last_pattern(closedList, tileDict, intersectionDict, clues):
                     intersect_wp_loc= intersect_wp.get_startLoc()
                     intersect_dir = intersect_wp.get_direction()
                     intersect_len = intersect_wp.get_length()
-                    _ = get_ratio(intersect_wp_loc[0], intersect_wp_loc[1], intersect_dir, intersect_len, wp_letters, tileDict)
+                    if intersect_wp.get_clueNum() == 16:
+                        print("from change pattern: across")
+                    ratio = get_ratio(intersect_wp_loc[0], intersect_wp_loc[1], intersect_dir, intersect_len, wp_letters, tileDict)
                     regex = build_regex(wp_letters)
                     freedom = get_freedom(intersect_wp, regex)
                     intersect_wp.set_freedom(freedom)
+                    if ratio == 1:
+                        print("SPECIAL CASE: CHANGE WORD PATTERN")
+                        lst = query_wordpattern(intersect_wp, regex)
+                        _, c = lst[0]
+                        intersect_wp.set_clue(c)
             else:
                 if DEBUG:
                     print(word[i])
@@ -242,10 +255,17 @@ def change_last_pattern(closedList, tileDict, intersectionDict, clues):
                     intersect_wp_loc= intersect_wp.get_startLoc()
                     intersect_dir = intersect_wp.get_direction()
                     intersect_len = intersect_wp.get_length()
-                    _ = get_ratio(intersect_wp_loc[0], intersect_wp_loc[1], intersect_dir, intersect_len, wp_letters, tileDict)
+                    if intersect_wp.get_clueNum() == 16:
+                        print("from change pattern: down")
+                    ratio = get_ratio(intersect_wp_loc[0], intersect_wp_loc[1], intersect_dir, intersect_len, wp_letters, tileDict)
                     regex = build_regex(wp_letters)
                     freedom = get_freedom(intersect_wp, regex)
                     intersect_wp.set_freedom(freedom)
+                    if ratio == 1:
+                        print("SPECIAL CASE: CHANGE WORD PATTERN")
+                        lst = query_wordpattern(intersect_wp, regex)
+                        _, c = lst[0]
+                        intersect_wp.set_clue(c)
             else:
                 tile.set_letter(word[i])
                 tile.set_state(True)
@@ -256,8 +276,8 @@ def change_last_pattern(closedList, tileDict, intersectionDict, clues):
     return True
 
 def backtrack(tileDict, intersectionDict, infoList, clues):
-    # Backtrack called when all results in the last closedList in infoList are used up 
-    # Get last pattern instantiated 
+    # Backtrack called when all results in the last closedList in infoList are used up
+    # Get last pattern instantiated
     # Remove last closedList from infoList
     if DEBUG:
         print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
@@ -277,7 +297,7 @@ def backtrack(tileDict, intersectionDict, infoList, clues):
             print("WORD REMOVED FROM CLUES")
 
         clues.remove(last_closedList.get_results()[-1])
-    
+
     # Reset tiles that aren't intersection tiles and intersection tiles that aren't in previously instantiated patterns
     startLoc = last_pattern.get_startLoc()
     start_x = startLoc[0]
@@ -285,6 +305,7 @@ def backtrack(tileDict, intersectionDict, infoList, clues):
     direction = last_pattern.get_direction()
     patternLen = last_pattern.get_length()
     last_pattern.set_clue(None)
+    last_pattern.set_instantiated(False)
 
     if direction == "across":
         for i in range(patternLen):
@@ -311,24 +332,22 @@ def backtrack(tileDict, intersectionDict, infoList, clues):
                 tile.set_letter(None)
                 tile.set_state(False)
 
-    # try different word from results in the new "last" closed List 
+    # try different word from results in the new "last" closed List
     if infoList:
         if DEBUG:
             print("CALLING CHANGE LAST PATTERN FROM BACKTRACK")
         success = change_last_pattern(infoList[-1], tileDict, intersectionDict, clues)
-        print("NUM OF CLOSEDLISTS LEFT: " + str(infoList))
+        if DEBUG:
+            print("NUM OF CLOSEDLISTS LEFT: " + str(len(infoList)))
         if not success:
             print("RECURSIVE CALL")
             success = backtrack(tileDict, intersectionDict, infoList, clues)
-    
-        if DEBUG:
-            print("SUCCESS 2? END OF BACKTRACK:"+ str(len(infoList)))
-        
+
         return success
-    else: 
+    else:
         print("INVALID BOARD")
         return False
-    
+
 
 def choose_wordpattern(wordPatterns, tileDict, intersectionDict, infoList, clues):
     if DEBUG:
@@ -346,7 +365,7 @@ def choose_wordpattern(wordPatterns, tileDict, intersectionDict, infoList, clues
         # Check for arc-consistency... Check if there's a pattern with a Freedom of 0 and back track if needed
         # First try a different word from the last closedList in infoList
         # If no more words in results from last closedList to try, BACKTRACK.
-        if pattern.get_freedom() == 0: 
+        if pattern.get_freedom() == 0:
             if DEBUG:
                 print("NOT ARC-CONSISTENT...")
             last_closedList = infoList[-1]
@@ -361,8 +380,9 @@ def choose_wordpattern(wordPatterns, tileDict, intersectionDict, infoList, clues
                     print("Backtracking")
                 success = backtrack(tileDict, intersectionDict, infoList, clues)
             if success:
-                return None, None
-            return None, []
+                return None, None, success
+            else:
+                return None, [], success
 
         startLoc = pattern.get_startLoc()
         start_x = startLoc[0]
@@ -370,9 +390,16 @@ def choose_wordpattern(wordPatterns, tileDict, intersectionDict, infoList, clues
         direction = pattern.get_direction()
         length = pattern.get_length()
 
-        #build Regex 
+        #build Regex
         instantiated_lst = []
         ratio = get_ratio(start_x, start_y, direction, length, instantiated_lst, tileDict)
+        if ratio == 1 and not pattern.is_instantiated():
+            regex = build_regex(highest_ratio_letters[highest_ratio_wp_lst.index(pattern)])
+
+            lst = query_wordpattern(pattern, regex)
+            _, c = lst[0]
+            pattern.set_clue(c)
+
         if DEBUG:
             print("Ratio: " + str(ratio))
 
@@ -384,9 +411,9 @@ def choose_wordpattern(wordPatterns, tileDict, intersectionDict, infoList, clues
         elif ratio == highest_ratio:
             highest_ratio_letters.append(instantiated_lst)
             highest_ratio_wp_lst.append(pattern)
-        
+
     if highest_ratio == -1:
-        return None, highest_ratio_wp_lst
+        return None, highest_ratio_wp_lst, True
 
     # Get Most Constrained (First encountered kept)
     most_constrained_wp = None
@@ -396,13 +423,13 @@ def choose_wordpattern(wordPatterns, tileDict, intersectionDict, infoList, clues
         if most_contrained is None or wp.get_freedom() < most_contrained:
             most_constrained_wp = wp
             most_contrained = wp.get_freedom()
-    
+
     # Build Regex for Querying most contrained pattern
     regex = build_regex(highest_ratio_letters[highest_ratio_wp_lst.index(most_constrained_wp)])
 
     results = query_wordpattern(most_constrained_wp, regex)
 
-    return most_constrained_wp,results
+    return most_constrained_wp,results, True
 
 def instantiate_wordpattern(pattern, results, tileDict, wordPatterns, intersectionDict, infoList, clues):
     if DEBUG:
@@ -410,14 +437,14 @@ def instantiate_wordpattern(pattern, results, tileDict, wordPatterns, intersecti
         print("INSTANTIATING WORD PATTERN:")
         print("PATTERN:")
         pattern.print_pattern()
-        
+
         print("RESULTS: ")
         print(results)
 
         print("--------------------------------")
     #implement pick strategy
 
-    # Create ClosedList object for 
+    # Create ClosedList object for
     closedList = InfoStructure(pattern, results)
     infoList.append(closedList)
 
@@ -426,6 +453,7 @@ def instantiate_wordpattern(pattern, results, tileDict, wordPatterns, intersecti
     while in_clues:
         if not closedList.get_results():
             if DEBUG:
+                print(clues)
                 print("INSTANTIATE WORDPATTERN: all words used")
             return False
         (word, clue) = closedList.get_results()[-1]
@@ -436,7 +464,7 @@ def instantiate_wordpattern(pattern, results, tileDict, wordPatterns, intersecti
         else:
             results.remove((word, clue))
             closedList.set_results(results)
-        
+
 
     # Set tiles with given word
     startLoc = pattern.get_startLoc()
@@ -446,13 +474,13 @@ def instantiate_wordpattern(pattern, results, tileDict, wordPatterns, intersecti
     patternLen = pattern.get_length()
 
     if direction == "across":
-        if DEBUG: 
+        if DEBUG:
             print(word)
         for i in range(patternLen):
             tile_loc = (start_x, start_y + i)
             tile = tileDict[tile_loc]
             if not tile.get_tile_state():
-                if DEBUG: 
+                if DEBUG:
                     print(word[i])
                 tile.set_letter(word[i])
                 tile.set_state(True)
@@ -462,10 +490,16 @@ def instantiate_wordpattern(pattern, results, tileDict, wordPatterns, intersecti
                     intersect_wp_loc= intersect_wp.get_startLoc()
                     intersect_dir = intersect_wp.get_direction()
                     intersect_len = intersect_wp.get_length()
-                    _ = get_ratio(intersect_wp_loc[0], intersect_wp_loc[1], intersect_dir, intersect_len, wp_letters, tileDict)
+                    ratio = get_ratio(intersect_wp_loc[0], intersect_wp_loc[1], intersect_dir, intersect_len, wp_letters, tileDict)
                     regex = build_regex(wp_letters)
                     freedom = get_freedom(intersect_wp, regex)
                     intersect_wp.set_freedom(freedom)
+                    if ratio == 1 and not intersect_wp.is_instantiated():
+                        lst = query_wordpattern(intersect_wp, regex)
+                        _, c = lst[0]
+                        intersect_wp.set_clue(c)
+
+
     else:
         for i in range(patternLen):
             tile_loc = (start_x+i, start_y)
@@ -479,13 +513,17 @@ def instantiate_wordpattern(pattern, results, tileDict, wordPatterns, intersecti
                     intersect_wp_loc= intersect_wp.get_startLoc()
                     intersect_dir = intersect_wp.get_direction()
                     intersect_len = intersect_wp.get_length()
-                    _ = get_ratio(intersect_wp_loc[0], intersect_wp_loc[1], intersect_dir, intersect_len, wp_letters, tileDict)
+                    ratio = get_ratio(intersect_wp_loc[0], intersect_wp_loc[1], intersect_dir, intersect_len, wp_letters, tileDict)
                     regex = build_regex(wp_letters)
                     freedom = get_freedom(intersect_wp, regex)
                     intersect_wp.set_freedom(freedom)
+                    if ratio == 1 and not intersect_wp.is_instantiated():
+                        lst = query_wordpattern(intersect_wp, regex)
+                        _, c = lst[0]
+                        intersect_wp.set_clue(c)
 
     pattern.set_instantiated(True)
     return True
-    
-    
-    
+
+
+
