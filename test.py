@@ -1,11 +1,11 @@
-from Tile import InfoStructure, Tile, WordPattern
+def test(lst):
+    lst.pop(-1)
 
-wordPatterns = []
+x = [1,2,3,4,5,6]
 
-for i in range(10):
-    loc = (i,i)
-    wordPatterns.append(WordPattern(loc, "across", 10, 0))
-
-for pattern in wordPatterns:
-    pattern.set_direction("down")
-    pattern.print_pattern()
+print(x)
+print(len(x))
+print("----------")
+test(x)
+print(x)
+print(len(x))

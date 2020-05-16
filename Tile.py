@@ -1,32 +1,31 @@
 class InfoStructure: 
-    def __init__(self, word, resultSize, openLstPos, pattern):
-        self.word = word
-        self.resultSize = resultSize
-        self.openLstPos = openLstPos
+    def __init__(self, pattern, results):
+        self.results = results
         self.pattern = pattern
     
     '''
         Getters
     '''
-    def get_word(self):
-        return self.word
-
-    def get_resultSize(self):
-        return self.resultSize
-    
-    def get_openLstPos(self):
-        return self.openLstPos
-
     def get_pattern(self):
         return self.pattern
+        
+    def get_resultSize(self):
+        return len(self.results)
+    
+    def get_results(self):
+        return self.results
 
     ''''
         Setters
     ''' 
 
-    def set_resultSize(self, size):
-        self.resultSize = size
+    def set_results(self, results):
+        self.result = results
 
+    def print_info(self):
+        print(self.results)
+        print(self.pattern.print_pattern())
+        
 class Tile:
     def __init__(self, location, state, letter, intersection, clueNum):
         self.location = location
@@ -76,12 +75,14 @@ class Tile:
         print("-------------------------------------------")
 
 class WordPattern:
-    def __init__(self, startLoc, direction, length, freedom):
+    def __init__(self, startLoc, direction, length, freedom, clueNum=None, clue=None, instantiated=False):
         self.startLoc = startLoc
         self.direction = direction
         self.length = length
         self.freedom = freedom 
-
+        self.instantiated = instantiated
+        self.clueNum = clueNum
+        self.clue = clue
     '''
         Getters
     '''
@@ -97,6 +98,14 @@ class WordPattern:
     def get_freedom(self):
         return self.freedom
 
+    def get_clueNum(self):
+        return self.clueNum
+
+    def get_clue(self):
+        return self.clue
+
+    def is_instantiated(self):
+        return self.instantiated
     '''
         Setters
     '''
@@ -111,7 +120,18 @@ class WordPattern:
     
     def set_freedom(self, freedom):
         self.freedom = freedom
+    
+    def set_clueNum(self, clueNum):
+        self.clueNum = clueNum
 
+    def set_clue(self, clue):
+        self.clue = clue
+
+    def set_instantiated(self, b):
+        self.instantiated = b
+
+    def is_equal(self, pattern):
+        return self.startLoc == pattern.get_startLoc() and self.direction == pattern.get_direction()
     '''
         Debugging Print
     '''
@@ -121,4 +141,6 @@ class WordPattern:
         print("direction: " + self.direction)
         print("length: " + str(self.length))
         print("freedom: " + str(self.freedom))
+        print("CLUENUM: " + str(self.clueNum) )
+        print("CLUE: " + str(self.clue) )
         print()

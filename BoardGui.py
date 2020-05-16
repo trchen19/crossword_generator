@@ -3,13 +3,15 @@ import random
 import string
 import BoardGenerator
 import UpdateBoard
+import math
 
 DEBUG = False
+PRINT_ANSWER = False
 BOX_SIZE = 25
 
 layout = [
     [sg.Text('Crossword Puzzle Using PySimpleGUI'), sg.Text('', key='-OUTPUT-')],
-    [sg.Graph((500, 500), (0, 450), (450, 0), key='graph',
+    [sg.Graph((600, 600), (0, 550), (550, 0), key='graph',
               change_submits=True, drag_submits=False)],
     [sg.Button('Show'), sg.Button('Exit')]
 ]
@@ -22,35 +24,62 @@ g = window['graph']
 <<<<<<<<<<<<<<<<<<Get user input here>>>>>>>>>>>>>>>>>>>>>
 '''
 # tiling = input("Please enter valid nxn 2D array: ")
-## Insert input validation check here!! 
+# Insert input validation check here!! 
 # tiling = [[1,1,1,1,1], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0]]
 # tiling = [[1,0,0,0,0], [1,0,0,0,0], [1,0,0,0,0], [1,0,0,0,0],[1,0,0,0,0]]
 # tiling = [[1,1,1,1,1], [1,0,0,0,0], [1,0,0,0,0], [1,0,0,0,0],[1,0,0,0,0]]
 # tiling = [[1,1,1,1,1], [0,0,1,0,0], [0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0]]
-# tiling = [[1,1,1,1,1], [0,0,1,0,0], [1,1,0,1,1],[0,0,1,0,0],[0,0,1,0,0]]
+# tiling = [[1,1,1,1,1], [0,0,1,0,0], [1,1,1,1,1],[0,0,1,0,0],[0,0,1,0,0]]
 # tiling = [[1,1,1,1,1], [0,0,1,0,0], [1,1,0,1,1],[1,0,1,0,0],[1,0,1,0,0]] 
-tiling = [[1,0,0,0,0,0,1,1,0,0],
-          [1,0,0,1,0,0,1,0,0,0],
-          [1,1,1,1,1,1,1,0,0,0],
-          [1,0,0,1,0,0,0,0,0,0],
-          [1,0,0,1,1,1,1,0,0,0],
-          [1,0,0,0,0,1,0,0,0,0],
-          [0,0,0,0,0,1,0,0,0,0],
-          [0,0,0,0,0,1,0,0,0,0],
-          [0,0,0,1,1,1,1,1,0,0],
-          [0,0,0,0,0,1,0,0,0,0],
-        ] #Jo's tiling
+# tiling = [[1,1,1,1,1], [0,0,1,0,0], [1,1,1,1,1],[1,0,1,0,0],[1,0,1,0,0]] 
 
+# tiling = [[1,0,0,0,0,0,1,1,1,0],
+#           [1,0,0,1,0,0,1,0,0,0],
+#           [1,1,1,1,1,1,1,0,0,0],
+#           [1,0,0,1,0,0,0,0,0,0],
+#           [1,0,0,1,1,1,1,0,0,0],
+#           [1,0,0,0,0,1,0,0,0,0],
+#           [0,0,0,0,0,1,0,0,0,0],
+#           [0,0,0,0,0,1,0,0,0,0],
+#           [0,0,0,1,1,1,1,1,0,0],
+#           [0,0,0,0,0,1,0,0,0,0]
+#         ] #Jo's tiling
+
+# tiling = [[1,1,1,1,1],
+#           [1,1,1,1,1],
+#           [1,0,1,1,1],
+#           [1,1,1,1,1],
+#           [1,1,1,1,1]
+#         ]
+
+# tiling = [[1,1,1,1,1],
+#           [1,1,1,1,1],
+#           [1,0,1,0,1],
+#           [1,1,1,1,1],
+#           [1,1,1,1,1]
+#         ]
+
+tiling = [[1,0,0,1,1,1,1,1,1,0],
+          [1,0,0,1,1,1,1,0,1,0],
+          [1,1,1,0,1,1,1,1,1,0],
+          [1,0,0,0,0,0,0,0,1,0],
+          [1,0,0,0,1,1,1,1,1,1],
+          [1,0,0,0,0,1,0,0,1,1],
+          [0,1,0,1,0,1,0,0,0,1],
+          [1,1,1,1,0,1,1,1,1,1],
+          [1,1,0,1,1,1,1,1,1,0],
+          [1,0,0,1,0,1,0,0,1,0]
+        ] 
 
 '''
 <<<<<<<<<<<<<<<<<<Call BoardGenerator Functions: Generate Crossword Here>>>>>>>>>>>>>>>>>>>>
 '''
     
-# list of all words being considered in queries
-openList = []
+# list of all patterns being considered in queries and their results
+infoList = []
 
 # list containing (word, clue)
-clue = []
+clues = []
 
 '''
     Find all Word Patterns
@@ -64,8 +93,9 @@ UpdateBoard.set_freedom(wordPatterns)
 
 if DEBUG: 
     print("ALL Patterns ...")
-    print(wordPatterns)
-    print("-----------------------------")
+    for wp in wordPatterns:
+        wp.print_pattern()
+        print("-----------------------------")
 
 '''
     Create Tile objects for each box
@@ -83,12 +113,57 @@ if DEBUG:
     for tile in tileDict.values():
         tile.print_tileInfo()
 
-print(tileDict)
-print(intersectionDict)
+# print(tileDict)
+# print(intersectionDict)
+print(len(wordPatterns))
 '''
     Get the seed for instantiation
 '''
-wp_idx = UpdateBoard.get_seed(wordPatterns, tileDict)
+pattern, results = UpdateBoard.get_seed(wordPatterns, tileDict)
+seeded = UpdateBoard.instantiate_wordpattern(pattern, results, tileDict, wordPatterns, intersectionDict, infoList, clues)
+
+'''
+    Get Board Soution
+'''
+if not seeded:
+    print("FAILED TO SEED")
+
+valid_board = True
+while valid_board:
+    if len(infoList) == len(wordPatterns):
+        print("COMPLETED BOARD")
+        break
+    
+    wp, r = UpdateBoard.choose_wordpattern(wordPatterns, tileDict, intersectionDict, infoList, clues)
+
+    while wp is None and r is None:
+        wp, r = UpdateBoard.choose_wordpattern(wordPatterns, tileDict, intersectionDict, infoList, clues)
+        if not infoList:
+            print("INVALID BOARD PART ii")
+            valid_board = False
+            break
+
+    if wp is None and len(r) == 0:
+        #NOT VALID: CASE WHEN FREEDOM AND EVERYTHING > 0 BUT QUERY RESULTS RETURN [].... OUTPUT FROM CHOOSE WORDPATTERN IS (PATTERN, [])
+        #NEED TO CHANGE PREVIOUS WORDS AND POTENTIALLY BACKTRACK 
+        print("Completed Search")
+        break
+    else:
+        success = UpdateBoard.instantiate_wordpattern(wp, r, tileDict, wordPatterns, intersectionDict, infoList, clues)
+        success_backtrack = True
+        if not success and len(infoList) > 0: 
+            success_backtrack = UpdateBoard.backtrack(tileDict, intersectionDict, infoList, clues)
+        elif not success and not infoList:
+            print("INVALID BOARD PART ii")
+            valid_board = False
+            break
+        if not success_backtrack:
+            print("INVALID BOARD PART ii")
+            valid_board = False
+            break
+# Tiles with letters filled in 
+
+# ****************Still need to associate clues with appropriate words/Tiles****************
 
 for row in range(len(tiling)):
     for col in range(len(tiling[0])):
@@ -98,12 +173,55 @@ for row in range(len(tiling)):
             g.draw_rectangle((col * BOX_SIZE + 5, row * BOX_SIZE + 3), (col * BOX_SIZE + BOX_SIZE + 5, row * BOX_SIZE + BOX_SIZE + 3), line_color='black')
             currTile = tileDict[(row, col)]
             # Draw clue number if needed in a given tile
+            # Draw Letters in tiles
+            
+            if currTile.get_tile_letter() is not None and PRINT_ANSWER:
+                g.draw_text( str(currTile.get_tile_letter()),
+                                (col * BOX_SIZE + 18, row * BOX_SIZE +17), font='Courier 18')
             if currTile.get_tile_clue() != 0:
                 g.draw_text( str(currTile.get_tile_clue()),
                             (col * BOX_SIZE + 10, row * BOX_SIZE + 8))
         else:
             # Blackout box if not valid tile
             g.draw_rectangle((col * BOX_SIZE + 5, row * BOX_SIZE + 3), (col * BOX_SIZE + BOX_SIZE + 5, row * BOX_SIZE + BOX_SIZE + 3), line_color='black', fill_color='black')
+
+# Write Clues -- DEBUGGING
+if PRINT_ANSWER:
+    mid = math.ceil(len(clues)/2)
+    g.draw_text("CLUES:", (125, 275), font='Courier 16', text_location="center")
+    for i in range(mid):
+        g.draw_text( clues[i], (125, i * 15 +300), font='Courier 8', text_location="center")
+    for i in range(len(clues)-mid):
+        g.draw_text( clues[i+mid], (400, i * 15 +300), font='Courier 8')
+
+if not PRINT_ANSWER and valid_board:
+
+    g.draw_text("CLUES:", (267.5, 275), font='Courier 18', text_location="center")
+    g.draw_text("ACROSS:", (125, 300), font='Courier 16', text_location="center")
+    g.draw_text("DOWN:", (400, 300), font='Courier 16', text_location="center")
+    across_lst = []
+    down_lst = []
+    for pattern in wordPatterns:
+        if DEBUG:
+            print("CLUE NUM: ")
+            print(pattern.get_clueNum())
+            print("CLUE: ")
+            print(pattern.get_clue())
+        s = str(pattern.get_clueNum()) + ". " + pattern.get_clue() 
+        if pattern.get_direction() == "across": 
+            across_lst.append((pattern.get_clueNum(), s))
+        if pattern.get_direction() == "down": 
+            down_lst.append((pattern.get_clueNum(), s))
+
+    across_lst = sorted(across_lst, key=lambda x: x[0])
+    down_lst = sorted(down_lst, key=lambda x: x[0])
+
+    for i in range(len(across_lst)):
+        g.draw_text( across_lst[i][1], (125, i * 15 +325), font='Courier 8', text_location="center")
+    for i in range(len(down_lst)):
+        g.draw_text( down_lst[i][1], (400, i * 15 +325), font='Courier 8')
+
+
 
 # Start event loop
 while True:             

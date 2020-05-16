@@ -27,7 +27,7 @@ def get_wordPatterns(tiling):
                 startLoc = (i,j)
             elif tiling[i][j] and patternLen > 0:
                 patternLen += 1
-            elif not tiling[i][j] and patternLen > 1:
+            elif not tiling[i][j] and patternLen > 2:
                 wordPatterns.append( WordPattern(startLoc, "across", patternLen, freedom) )
                 startLoc = None
                 patternLen = 0
@@ -35,7 +35,7 @@ def get_wordPatterns(tiling):
                 startLoc = None
                 patternLen = 0
 
-            if j == d-1 and patternLen > 1:
+            if j == d-1 and patternLen > 2:
                 wordPatterns.append( WordPattern(startLoc, "across", patternLen, freedom) )
 
 
@@ -50,7 +50,7 @@ def get_wordPatterns(tiling):
                 startLoc = (i,j)
             elif tiling[i][j] and patternLen > 0:
                 patternLen += 1
-            elif not tiling[i][j] and patternLen > 1:
+            elif not tiling[i][j] and patternLen > 2:
                 wordPatterns.append( WordPattern(startLoc, "down", patternLen, freedom) )
                 startLoc = None
                 patternLen = 0
@@ -58,7 +58,7 @@ def get_wordPatterns(tiling):
                 startLoc = None
                 patternLen = 0
 
-            if i == d-1 and patternLen > 1:
+            if i == d-1 and patternLen > 2:
                 wordPatterns.append( WordPattern(startLoc, "down", patternLen, freedom) )
 
     return wordPatterns
@@ -95,11 +95,20 @@ def determine_intersection(i, j, wpLst):
     return in_down and in_across, pattern_across, pattern_down
 
 def get_clue(i, j, lastClue, wpLst):
+    incremented = False
+    nextClue = None
     for pattern in wpLst:
         if (i,j) == pattern.get_startLoc():
-            nextClue = lastClue + 1
-            return nextClue
-    return lastClue
+            if incremented:
+                pattern.set_clueNum(nextClue)
+            else:
+                nextClue = lastClue + 1
+                pattern.set_clueNum(nextClue)
+                incremented = True
+    if incremented:
+        return nextClue
+    else:
+        return lastClue
 
 def get_Tiles(tiling, wordPatterns):
     # Create list of tiles
@@ -114,7 +123,7 @@ def get_Tiles(tiling, wordPatterns):
                 location = (i, j)
                 intersection, p_across, p_down = determine_intersection(i, j, wordPatterns)
                 if intersection:
-                    intersection[(i,j)] = [p_across, p_down]
+                    intersectionDict[(i,j)] = [p_across, p_down]
                 clueNum = get_clue(i, j, lastClue, wordPatterns)
                 if clueNum > lastClue:
                     t = Tile(location, False, None, intersection, clueNum)
