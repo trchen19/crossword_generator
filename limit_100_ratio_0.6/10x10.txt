@@ -1,0 +1,20 @@
+TRIALS: 100, Ratio: 0.6, Dimensions: 10x10
+
+Time Elapsed: 0.140625, Success: True, Backtracks: 15
+------------------------------------------------
+Time Elapsed: 0.03125, Success: True, Backtracks: 0
+------------------------------------------------
+Time Elapsed: 0.0625, Success: True, Backtracks: 0
+------------------------------------------------
+Time Elapsed: 0.0625, Success: True, Backtracks: 0
+------------------------------------------------
+Time Elapsed: 0.046875, Success: True, Backtracks: 0
+------------------------------------------------
+
+AVERAGE TIME: 0.06875, AVERAGE BACKTRACKS: 3.0
+
+SUCCESSFUL BOARDS: 5
+AVERAGE TIME (SUCCESS): 0.06875, AVERAGE BACKTRACKS: 3.0
+
+FAILED BOARDS: 0
+AVERAGE TIME (SUCCESS): 0, AVERAGE BACKTRACKS: -1

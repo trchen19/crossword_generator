@@ -3,6 +3,7 @@
 
 import  mysql.connector
 import csv
+import string
 
 mydb = mysql.connector.connect(
     host="localhost",
@@ -20,6 +21,7 @@ with open('American.csv', 'r') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
     for word, clue in reader:
         temp = word.replace(" ", "")
+        temp = temp.translate(str.maketrans('', '', string.punctuation))
         numLetters = len(temp)
         if str(numLetters) not in wordClues.keys():
             wordClues[str(numLetters)] = []
@@ -29,13 +31,13 @@ with open('American.csv', 'r') as csvfile:
 
 # populate mydatabase with words and clues
 mycursor = mydb.cursor()      
-print(wordClues.keys())
-print(wordClues["20"])
+# print(wordClues.keys())
+# print(wordClues["20"])
 for numLetterStr in wordClues.keys():
 
     table_name = "words_" + numLetterStr
 
-
+    # mycursor.execute("DROP TABLE " + table_name)
     mycursor.execute("CREATE TABLE "+table_name+" (term VARCHAR(255), clue VARCHAR(255))")
     print(table_name + " TABLE CREATED.....")
     print(mycursor.rowcount, "pre-insertion for table: "+ table_name)

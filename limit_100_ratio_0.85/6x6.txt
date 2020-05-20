@@ -1,0 +1,210 @@
+TRIALS: 100, Ratio: 0.85, Dimensions: 6x6
+
+Time Elapsed: 0.046875, Success: True, Backtracks: 4
+------------------------------------------------
+Time Elapsed: 0.015625, Success: True, Backtracks: 0
+------------------------------------------------
+Time Elapsed: 0.03125, Success: True, Backtracks: 0
+------------------------------------------------
+Time Elapsed: 0.21875, Success: True, Backtracks: 16
+------------------------------------------------
+Time Elapsed: 0.4375, Success: False, Backtracks: 6
+------------------------------------------------
+Time Elapsed: 0.5625, Success: True, Backtracks: 23
+------------------------------------------------
+Time Elapsed: 0.25, Success: True, Backtracks: 28
+------------------------------------------------
+Time Elapsed: 0.140625, Success: True, Backtracks: 4
+------------------------------------------------
+Time Elapsed: 0.0, Success: True, Backtracks: 0
+------------------------------------------------
+Time Elapsed: 0.828125, Success: True, Backtracks: 72
+------------------------------------------------
+Time Elapsed: 0.046875, Success: True, Backtracks: 0
+------------------------------------------------
+Time Elapsed: 0.078125, Success: True, Backtracks: 4
+------------------------------------------------
+Time Elapsed: 0.65625, Success: False, Backtracks: 28
+------------------------------------------------
+Time Elapsed: 0.03125, Success: True, Backtracks: 0
+------------------------------------------------
+Time Elapsed: 2.234375, Success: False, Backtracks: 82
+------------------------------------------------
+Time Elapsed: 0.0625, Success: True, Backtracks: 0
+------------------------------------------------
+Time Elapsed: 0.234375, Success: True, Backtracks: 5
+------------------------------------------------
+Time Elapsed: 1.640625, Success: True, Backtracks: 84
+------------------------------------------------
+Time Elapsed: 0.015625, Success: True, Backtracks: 0
+------------------------------------------------
+Time Elapsed: 0.078125, Success: True, Backtracks: 6
+------------------------------------------------
+Time Elapsed: 1.078125, Success: True, Backtracks: 68
+------------------------------------------------
+Time Elapsed: 0.46875, Success: True, Backtracks: 15
+------------------------------------------------
+Time Elapsed: 5.28125, Success: False, Backtracks: 168
+------------------------------------------------
+Time Elapsed: 0.09375, Success: True, Backtracks: 0
+------------------------------------------------
+Time Elapsed: 0.71875, Success: True, Backtracks: 42
+------------------------------------------------
+Time Elapsed: 0.34375, Success: False, Backtracks: 23
+------------------------------------------------
+Time Elapsed: 0.03125, Success: True, Backtracks: 0
+------------------------------------------------
+Time Elapsed: 0.03125, Success: True, Backtracks: 2
+------------------------------------------------
+Time Elapsed: 1.3125, Success: True, Backtracks: 147
+------------------------------------------------
+Time Elapsed: 0.0625, Success: True, Backtracks: 0
+------------------------------------------------
+Time Elapsed: 0.375, Success: True, Backtracks: 18
+------------------------------------------------
+Time Elapsed: 4.125, Success: False, Backtracks: 165
+------------------------------------------------
+Time Elapsed: 0.0, Success: True, Backtracks: 0
+------------------------------------------------
+Time Elapsed: 0.015625, Success: True, Backtracks: 0
+------------------------------------------------
+Time Elapsed: 0.8125, Success: True, Backtracks: 88
+------------------------------------------------
+Time Elapsed: 0.59375, Success: True, Backtracks: 51
+------------------------------------------------
+Time Elapsed: 0.828125, Success: True, Backtracks: 47
+------------------------------------------------
+Time Elapsed: 0.03125, Success: True, Backtracks: 0
+------------------------------------------------
+Time Elapsed: 19.828125, Success: False, Backtracks: 996
+------------------------------------------------
+Time Elapsed: 0.03125, Success: True, Backtracks: 3
+------------------------------------------------
+Time Elapsed: 1.046875, Success: True, Backtracks: 33
+------------------------------------------------
+Time Elapsed: 0.078125, Success: True, Backtracks: 6
+------------------------------------------------
+Time Elapsed: 0.078125, Success: False, Backtracks: 8
+------------------------------------------------
+Time Elapsed: 0.5, Success: False, Backtracks: 25
+------------------------------------------------
+Time Elapsed: 0.40625, Success: False, Backtracks: 14
+------------------------------------------------
+Time Elapsed: 0.03125, Success: True, Backtracks: 0
+------------------------------------------------
+Time Elapsed: 0.0, Success: True, Backtracks: 0
+------------------------------------------------
+Time Elapsed: 1.0625, Success: False, Backtracks: 20
+------------------------------------------------
+Time Elapsed: 0.03125, Success: True, Backtracks: 3
+------------------------------------------------
+Time Elapsed: 6.578125, Success: True, Backtracks: 300
+------------------------------------------------
+Time Elapsed: 0.03125, Success: True, Backtracks: 0
+------------------------------------------------
+Time Elapsed: 0.15625, Success: True, Backtracks: 11
+------------------------------------------------
+Time Elapsed: 0.03125, Success: True, Backtracks: 0
+------------------------------------------------
+Time Elapsed: 0.203125, Success: True, Backtracks: 7
+------------------------------------------------
+Time Elapsed: 0.1875, Success: True, Backtracks: 3
+------------------------------------------------
+Time Elapsed: 0.078125, Success: True, Backtracks: 3
+------------------------------------------------
+Time Elapsed: 0.03125, Success: True, Backtracks: 7
+------------------------------------------------
+Time Elapsed: 0.703125, Success: True, Backtracks: 24
+------------------------------------------------
+Time Elapsed: 0.0, Success: True, Backtracks: 0
+------------------------------------------------
+Time Elapsed: 0.046875, Success: True, Backtracks: 0
+------------------------------------------------
+Time Elapsed: 0.015625, Success: True, Backtracks: 0
+------------------------------------------------
+Time Elapsed: 0.046875, Success: True, Backtracks: 0
+------------------------------------------------
+Time Elapsed: 0.296875, Success: True, Backtracks: 25
+------------------------------------------------
+Time Elapsed: 0.234375, Success: True, Backtracks: 10
+------------------------------------------------
+Time Elapsed: 0.578125, Success: True, Backtracks: 29
+------------------------------------------------
+Time Elapsed: 0.03125, Success: True, Backtracks: 3
+------------------------------------------------
+Time Elapsed: 3.296875, Success: True, Backtracks: 135
+------------------------------------------------
+Time Elapsed: 0.03125, Success: True, Backtracks: 0
+------------------------------------------------
+Time Elapsed: 0.3125, Success: True, Backtracks: 9
+------------------------------------------------
+Time Elapsed: 0.015625, Success: True, Backtracks: 0
+------------------------------------------------
+Time Elapsed: 0.125, Success: True, Backtracks: 2
+------------------------------------------------
+Time Elapsed: 0.078125, Success: True, Backtracks: 8
+------------------------------------------------
+Time Elapsed: 0.203125, Success: True, Backtracks: 17
+------------------------------------------------
+Time Elapsed: 0.125, Success: True, Backtracks: 8
+------------------------------------------------
+Time Elapsed: 0.078125, Success: True, Backtracks: 2
+------------------------------------------------
+Time Elapsed: 0.0, Success: True, Backtracks: 0
+------------------------------------------------
+Time Elapsed: 0.03125, Success: True, Backtracks: 0
+------------------------------------------------
+Time Elapsed: 0.078125, Success: True, Backtracks: 6
+------------------------------------------------
+Time Elapsed: 4.4375, Success: True, Backtracks: 236
+------------------------------------------------
+Time Elapsed: 1.078125, Success: True, Backtracks: 21
+------------------------------------------------
+Time Elapsed: 0.359375, Success: True, Backtracks: 29
+------------------------------------------------
+Time Elapsed: 8.96875, Success: True, Backtracks: 336
+------------------------------------------------
+Time Elapsed: 0.03125, Success: True, Backtracks: 0
+------------------------------------------------
+Time Elapsed: 0.21875, Success: True, Backtracks: 7
+------------------------------------------------
+Time Elapsed: 0.421875, Success: False, Backtracks: 12
+------------------------------------------------
+Time Elapsed: 0.171875, Success: True, Backtracks: 5
+------------------------------------------------
+Time Elapsed: 0.03125, Success: True, Backtracks: 2
+------------------------------------------------
+Time Elapsed: 2.390625, Success: True, Backtracks: 80
+------------------------------------------------
+Time Elapsed: 0.203125, Success: True, Backtracks: 11
+------------------------------------------------
+Time Elapsed: 0.0625, Success: True, Backtracks: 4
+------------------------------------------------
+Time Elapsed: 1.65625, Success: False, Backtracks: 76
+------------------------------------------------
+Time Elapsed: 0.03125, Success: True, Backtracks: 0
+------------------------------------------------
+Time Elapsed: 0.03125, Success: True, Backtracks: 15
+------------------------------------------------
+Time Elapsed: 0.078125, Success: True, Backtracks: 15
+------------------------------------------------
+Time Elapsed: 0.40625, Success: True, Backtracks: 20
+------------------------------------------------
+Time Elapsed: 0.046875, Success: True, Backtracks: 3
+------------------------------------------------
+Time Elapsed: 1.921875, Success: False, Backtracks: 107
+------------------------------------------------
+Time Elapsed: 0.234375, Success: True, Backtracks: 13
+------------------------------------------------
+Time Elapsed: 0.71875, Success: True, Backtracks: 19
+------------------------------------------------
+Time Elapsed: 7.234375, Success: True, Backtracks: 166
+------------------------------------------------
+
+AVERAGE TIME: 0.91265625, AVERAGE BACKTRACKS: 40.9
+
+SUCCESSFUL BOARDS: 86
+AVERAGE TIME (SUCCESS): 0.6082848837209303, AVERAGE BACKTRACKS: 27.441860465116278
+
+FAILED BOARDS: 14
+AVERAGE TIME (SUCCESS): 2.7823660714285716, AVERAGE BACKTRACKS: 123.57142857142857

@@ -1,4 +1,4 @@
-class InfoStructure: 
+class QueryStructure: 
     def __init__(self, pattern, results):
         self.results = results
         self.pattern = pattern

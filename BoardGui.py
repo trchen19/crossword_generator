@@ -1,12 +1,11 @@
 import PySimpleGUI as sg
 import random
 import string
-import BoardGenerator
 import UpdateBoard
 import math
 
 DEBUG = False
-PRINT_ANSWER = True
+PRINT_ANSWER = False
 BOX_SIZE = 23
 
 layout = [
@@ -23,16 +22,6 @@ g = window['graph']
 '''
 <<<<<<<<<<<<<<<<<<Get user input here>>>>>>>>>>>>>>>>>>>>>
 '''
-# tiling = input("Please enter valid nxn 2D array: ")
-# Insert input validation check here!! 
-# tiling = [[1,1,1,1,1], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0], [0,0,0,0,0]]
-# tiling = [[1,0,0,0,0], [1,0,0,0,0], [1,0,0,0,0], [1,0,0,0,0],[1,0,0,0,0]]
-# tiling = [[1,1,1,1,1], [1,0,0,0,0], [1,0,0,0,0], [1,0,0,0,0],[1,0,0,0,0]]
-# tiling = [[1,1,1,1,1], [0,0,1,0,0], [0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0]]
-# tiling = [[1,1,1,1,1], [0,0,1,0,0], [1,1,1,1,1],[0,0,1,0,0],[0,0,1,0,0]]
-# tiling = [[1,1,1,1,1], [0,0,1,0,0], [1,1,0,1,1],[1,0,1,0,0],[1,0,1,0,0]] 
-# tiling = [[1,1,1,1,1], [0,0,1,0,0], [1,1,1,1,1],[1,0,1,0,0],[1,0,1,0,0]] 
-
 # tiling = [[1,0,0,0,0,0,1,1,1,0],
 #           [1,0,0,1,0,0,1,0,0,0],
 #           [1,1,1,1,1,1,1,0,0,0],
@@ -54,22 +43,16 @@ g = window['graph']
 
 # tiling = [[1,1,1,1,1],
 #           [1,1,1,1,1],
-#           [1,0,1,0,1],
+#           [1,1,1,1,1],
 #           [1,1,1,1,1],
 #           [1,1,1,1,1]
 #         ]
 
-# tiling = [[1,0,0,1,1,1,1,1,1,0],
-#           [1,0,0,1,1,1,1,0,1,0],
-#           [1,1,1,0,1,1,1,1,1,0],
-#           [1,0,0,0,0,0,0,0,1,0],
-#           [1,0,0,0,1,1,1,1,1,1],
-#           [1,0,0,0,0,1,0,0,1,1],
-#           [0,1,0,1,0,1,0,0,0,1],
-#           [1,1,1,1,0,1,1,1,1,1],
-#           [1,1,0,1,1,1,1,1,1,0],
-#           [1,0,0,1,0,1,0,0,1,0]
-#         ] 
+# tiling = [[1,1,1,1],
+#           [1,1,1,1],
+#           [1,1,1,1],
+#           [1,1,1,1]
+#         ]
 
 # tiling = [[1,1,1,1,1,1,1,1,1,0],
 #           [1,0,0,1,1,1,1,0,1,0],
@@ -83,132 +66,38 @@ g = window['graph']
 #           [1,0,0,1,0,1,0,0,1,0]
 #         ] 
 
-tiling = [[1,1,1,1,1,1,1,1,1,0,1,0],
-          [1,0,0,1,1,1,1,0,1,0,1,0],
-          [1,1,1,0,1,1,1,1,1,0,1,0],
-          [1,0,1,0,0,0,0,0,1,0,1,0],
-          [1,0,1,0,1,1,1,1,1,1,1,0],
-          [1,0,1,0,0,1,0,0,1,1,1,1],
-          [0,1,1,1,0,1,0,0,0,1,0,1],
-          [1,1,1,1,0,1,1,1,1,1,0,1],
-          [1,1,1,1,1,1,1,1,1,0,0,1],
-          [1,0,0,1,0,1,0,0,1,0,0,1],
-          [1,0,0,1,0,1,0,0,1,0,0,1],
-          [1,0,0,1,0,1,0,0,1,0,0,1]
-        ] 
-
-
 # tiling = [[1,1,1,1,1,1,1,1,1,0,1,0],
 #           [1,0,0,1,1,1,1,0,1,0,1,0],
 #           [1,1,1,0,1,1,1,1,1,0,1,0],
 #           [1,0,1,0,0,0,0,0,1,0,1,0],
 #           [1,0,1,0,1,1,1,1,1,1,1,0],
 #           [1,0,1,0,0,1,0,0,1,1,1,1],
-#           [0,1,1,1,1,1,0,0,0,1,0,1],
-#           [1,1,1,1,1,1,1,1,1,1,0,1],
+#           [0,1,1,1,0,1,0,0,0,1,0,1],
+#           [1,1,1,1,0,1,1,1,1,1,0,1],
 #           [1,1,1,1,1,1,1,1,1,0,0,1],
+#           [1,0,0,1,0,1,0,0,1,0,0,1],
+#           [1,0,0,1,0,1,0,0,1,0,0,1],
 #           [1,0,0,1,0,1,0,0,1,0,0,1]
 #         ] 
 
+
+tiling = [[1,1,1,1,1,1,1,1,1,0,1,0],
+          [1,0,0,1,1,1,1,0,1,0,1,0],
+          [1,1,1,0,1,1,1,1,1,0,1,0],
+          [1,0,1,0,0,0,0,0,1,0,1,0],
+          [1,0,1,0,1,1,1,1,1,1,1,0],
+          [1,0,1,0,0,1,0,0,1,1,1,1],
+          [0,1,1,1,1,1,0,0,0,1,0,1],
+          [1,1,1,1,1,1,1,1,1,1,0,1],
+          [1,1,1,1,1,1,1,1,1,0,0,1],
+          [1,0,0,1,0,1,0,0,1,0,0,1]
+        ] 
+
 boardSize = len(tiling)
-'''
-<<<<<<<<<<<<<<<<<<Call BoardGenerator Functions: Generate Crossword Here>>>>>>>>>>>>>>>>>>>>
-'''
-    
-# list of all patterns being considered in queries and their results
-infoList = []
+tileDict, wordPatterns, valid_board, backtrack_count = UpdateBoard.find_Solution(tiling)
 
-# list containing (word, clue)
-clues = []
-
-'''
-    Find all Word Patterns
-'''
-wordPatterns = BoardGenerator.get_wordPatterns(tiling)
-
-'''
-    Set Freedoms of all word patterns
-'''
-UpdateBoard.set_freedom(wordPatterns)
-
-if DEBUG: 
-    print("ALL Patterns ...")
-    for wp in wordPatterns:
-        wp.print_pattern()
-        print("-----------------------------")
-
-'''
-    Create Tile objects for each box
-'''
-d = len(tiling)
-
-if DEBUG:
-    for i in range(d):
-        for j in range(d):
-            print("LOCATION: " + str(i) + ", " + str(j) + " ..... INTERSECTION: " + str(BoardGenerator.determine_intersection(i,j, wordPatterns)))
-
-tileDict, intersectionDict = BoardGenerator.get_Tiles(tiling, wordPatterns)
-
-if DEBUG:
-    for tile in tileDict.values():
-        tile.print_tileInfo()
-
-# print(tileDict)
-# print(intersectionDict)
-print(len(wordPatterns))
-'''
-    Get the seed for instantiation
-'''
-pattern, results = UpdateBoard.get_seed(wordPatterns, tileDict)
-seeded = UpdateBoard.instantiate_wordpattern(pattern, results, tileDict, wordPatterns, intersectionDict, infoList, clues)
-
-'''
-    Get Board Soution
-'''
-if not seeded:
-    print("FAILED TO SEED")
-
-valid_board = True
-while valid_board:
-    if len(infoList) == len(wordPatterns):
-        print("COMPLETED BOARD")
-        break
-    
-    wp, r, s = UpdateBoard.choose_wordpattern(wordPatterns, tileDict, intersectionDict, infoList, clues)
-
-    while wp is None and r is None and s:
-        wp, r, s = UpdateBoard.choose_wordpattern(wordPatterns, tileDict, intersectionDict, infoList, clues)
-        if not infoList:
-            print("INVALID BOARD PART i: NO MORE INFOLISTS")
-            valid_board = False
-            break
-
-    if wp is None and len(r) == 0 and s:
-        #NOT VALID: CASE WHEN FREEDOM AND EVERYTHING > 0 BUT QUERY RESULTS RETURN [].... OUTPUT FROM CHOOSE WORDPATTERN IS (PATTERN, [])
-        #NEED TO CHANGE PREVIOUS WORDS AND POTENTIALLY BACKTRACK 
-        print("Completed Search")
-        break
-    elif wp is None and len(r) == 0 and not s:
-        print("INVALID BOARD PART ii")
-        valid_board = False
-        break
-    else:
-        success = UpdateBoard.instantiate_wordpattern(wp, r, tileDict, wordPatterns, intersectionDict, infoList, clues)
-        success_backtrack = True
-        if not success and len(infoList) > 0: 
-            success_backtrack = UpdateBoard.backtrack(tileDict, intersectionDict, infoList, clues)
-        elif not success and not infoList:
-            print("INVALID BOARD PART iii")
-            valid_board = False
-            break
-        if not success_backtrack:
-            print("INVALID BOARD PART iv")
-            valid_board = False
-            break
 # Tiles with letters filled in 
-
-# ****************Still need to associate clues with appropriate words/Tiles****************
-
+# Need: tileDict, tiling, wordPatterns, valid_board
 for row in range(len(tiling)):
     for col in range(len(tiling[0])):
         currTile = None
@@ -258,6 +147,15 @@ if valid_board:
 else:
     g.draw_text("BOO! INVALID BOARD", (267.5, boardSize * BOX_SIZE + 25), font='Courier 18', text_location="center")
 
+if PRINT_ANSWER:
+    for row in range(len(tiling)):
+        for col in range(len(tiling[0])):
+            currTile = None
+            if tiling[row][col]:
+                currTile = tileDict[(row, col)]
+                if currTile.get_tile_letter() is not None:
+                    g.draw_text( str(currTile.get_tile_letter()).lower(),
+                                (col * BOX_SIZE + 18, row * BOX_SIZE +17), font='Courier 16')
 
 
 # Start event loop
@@ -268,6 +166,7 @@ while True:
         break
 
     if event in (None, 'Show Answer'):
+    
         for row in range(len(tiling)):
             for col in range(len(tiling[0])):
                 currTile = None

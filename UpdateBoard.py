@@ -1,5 +1,6 @@
 import mysql.connector
-from Tile import InfoStructure, Tile, WordPattern
+from Tile import QueryStructure, Tile, WordPattern
+import BoardGenerator
 
 mydb = mysql.connector.connect(
     host="localhost",
@@ -17,10 +18,10 @@ def query_wordpattern(pattern, regex=None):
 
     table = "words_" + str(patternLen)
 
-    sql = "SELECT * FROM "+ table + " ORDER BY RAND() LIMIT 300"
+    sql = "SELECT * FROM "+ table + " ORDER BY RAND() LIMIT 10"
 
     if regex is not None:
-        sql = "SELECT * FROM "+ table + " WHERE term REGEXP '"+ regex + "' ORDER BY RAND() LIMIT 300"
+        sql = "SELECT * FROM "+ table + " WHERE term REGEXP '"+ regex + "' ORDER BY RAND() LIMIT 10"
 
     if DEBUG:
         print()
@@ -31,6 +32,7 @@ def query_wordpattern(pattern, regex=None):
         mycursor.execute(sql)
         return mycursor.fetchall()
     except:
+        print(regex)
         print("COULDN'T QUERY TABLE: " + table)
 
     return None
@@ -67,9 +69,8 @@ def get_freedom(pattern, regex=None):
             print("FREEDOM: " + str(freedom))
         return freedom
     except:
+        print(regex)
         print("COULDN'T QUERY TABLE: " + table)
-
-
 
     return None
 
@@ -225,17 +226,16 @@ def change_last_pattern(closedList, tileDict, intersectionDict, clues):
                     intersect_wp_loc= intersect_wp.get_startLoc()
                     intersect_dir = intersect_wp.get_direction()
                     intersect_len = intersect_wp.get_length()
-                    if intersect_wp.get_clueNum() == 16:
-                        print("from change pattern: across")
                     ratio = get_ratio(intersect_wp_loc[0], intersect_wp_loc[1], intersect_dir, intersect_len, wp_letters, tileDict)
                     regex = build_regex(wp_letters)
                     freedom = get_freedom(intersect_wp, regex)
                     intersect_wp.set_freedom(freedom)
                     if ratio == 1:
-                        print("SPECIAL CASE: CHANGE WORD PATTERN")
                         lst = query_wordpattern(intersect_wp, regex)
-                        _, c = lst[0]
-                        intersect_wp.set_clue(c)
+                        if lst:
+                            _, c = lst[0]
+                            intersect_wp.set_clue(c)
+                        intersect_wp.set_instantiated(True)
             else:
                 if DEBUG:
                     print(word[i])
@@ -255,17 +255,16 @@ def change_last_pattern(closedList, tileDict, intersectionDict, clues):
                     intersect_wp_loc= intersect_wp.get_startLoc()
                     intersect_dir = intersect_wp.get_direction()
                     intersect_len = intersect_wp.get_length()
-                    if intersect_wp.get_clueNum() == 16:
-                        print("from change pattern: down")
                     ratio = get_ratio(intersect_wp_loc[0], intersect_wp_loc[1], intersect_dir, intersect_len, wp_letters, tileDict)
                     regex = build_regex(wp_letters)
                     freedom = get_freedom(intersect_wp, regex)
                     intersect_wp.set_freedom(freedom)
                     if ratio == 1:
-                        print("SPECIAL CASE: CHANGE WORD PATTERN")
                         lst = query_wordpattern(intersect_wp, regex)
-                        _, c = lst[0]
-                        intersect_wp.set_clue(c)
+                        if lst:
+                            _, c = lst[0]
+                            intersect_wp.set_clue(c)
+                        intersect_wp.set_instantiated(True)
             else:
                 tile.set_letter(word[i])
                 tile.set_state(True)
@@ -275,7 +274,7 @@ def change_last_pattern(closedList, tileDict, intersectionDict, clues):
 
     return True
 
-def backtrack(tileDict, intersectionDict, infoList, clues):
+def backtrack(tileDict, intersectionDict, infoList, clues, backtrackCount):
     # Backtrack called when all results in the last closedList in infoList are used up
     # Get last pattern instantiated
     # Remove last closedList from infoList
@@ -306,6 +305,7 @@ def backtrack(tileDict, intersectionDict, infoList, clues):
     patternLen = last_pattern.get_length()
     last_pattern.set_clue(None)
     last_pattern.set_instantiated(False)
+    backtrackCount += 1
 
     if direction == "across":
         for i in range(patternLen):
@@ -340,21 +340,22 @@ def backtrack(tileDict, intersectionDict, infoList, clues):
         if DEBUG:
             print("NUM OF CLOSEDLISTS LEFT: " + str(len(infoList)))
         if not success:
-            print("RECURSIVE CALL")
-            success = backtrack(tileDict, intersectionDict, infoList, clues)
+            if DEBUG:
 
-        return success
+                print("RECURSIVE CALL")
+            success, backtrackCount = backtrack(tileDict, intersectionDict, infoList, clues, backtrackCount)
+
+        return success, backtrackCount
     else:
         print("INVALID BOARD")
-        return False
+        return False, backtrackCount
 
 
-def choose_wordpattern(wordPatterns, tileDict, intersectionDict, infoList, clues):
+def choose_wordpattern(wordPatterns, tileDict, intersectionDict, infoList, clues, backtrackCount):
     if DEBUG:
         print("--------------------------------")
         print("CHOOSING WORDPATTERN")
         print("--------------------------------")
-
     # Implement most_constrained and ratio
     highest_ratio = -1
     highest_ratio_letters = []
@@ -378,11 +379,11 @@ def choose_wordpattern(wordPatterns, tileDict, intersectionDict, infoList, clues
             else:
                 if DEBUG:
                     print("Backtracking")
-                success = backtrack(tileDict, intersectionDict, infoList, clues)
+                success, backtrackCount = backtrack(tileDict, intersectionDict, infoList, clues, backtrackCount)
             if success:
-                return None, None, success
+                return None, None, success, backtrackCount
             else:
-                return None, [], success
+                return None, [], success, backtrackCount
 
         startLoc = pattern.get_startLoc()
         start_x = startLoc[0]
@@ -394,11 +395,13 @@ def choose_wordpattern(wordPatterns, tileDict, intersectionDict, infoList, clues
         instantiated_lst = []
         ratio = get_ratio(start_x, start_y, direction, length, instantiated_lst, tileDict)
         if ratio == 1 and not pattern.is_instantiated():
-            regex = build_regex(highest_ratio_letters[highest_ratio_wp_lst.index(pattern)])
+            regex = build_regex(instantiated_lst)
 
             lst = query_wordpattern(pattern, regex)
-            _, c = lst[0]
-            pattern.set_clue(c)
+            if lst:
+                _, c = lst[0]
+                pattern.set_clue(c)
+                pattern.set_instantiated(True)
 
         if DEBUG:
             print("Ratio: " + str(ratio))
@@ -413,7 +416,7 @@ def choose_wordpattern(wordPatterns, tileDict, intersectionDict, infoList, clues
             highest_ratio_wp_lst.append(pattern)
 
     if highest_ratio == -1:
-        return None, highest_ratio_wp_lst, True
+        return None, highest_ratio_wp_lst, True, backtrackCount
 
     # Get Most Constrained (First encountered kept)
     most_constrained_wp = None
@@ -429,7 +432,7 @@ def choose_wordpattern(wordPatterns, tileDict, intersectionDict, infoList, clues
 
     results = query_wordpattern(most_constrained_wp, regex)
 
-    return most_constrained_wp,results, True
+    return most_constrained_wp,results, True, backtrackCount
 
 def instantiate_wordpattern(pattern, results, tileDict, wordPatterns, intersectionDict, infoList, clues):
     if DEBUG:
@@ -445,7 +448,7 @@ def instantiate_wordpattern(pattern, results, tileDict, wordPatterns, intersecti
     #implement pick strategy
 
     # Create ClosedList object for
-    closedList = InfoStructure(pattern, results)
+    closedList = QueryStructure(pattern, results)
     infoList.append(closedList)
 
     # Use the last word in the results list
@@ -496,8 +499,10 @@ def instantiate_wordpattern(pattern, results, tileDict, wordPatterns, intersecti
                     intersect_wp.set_freedom(freedom)
                     if ratio == 1 and not intersect_wp.is_instantiated():
                         lst = query_wordpattern(intersect_wp, regex)
-                        _, c = lst[0]
-                        intersect_wp.set_clue(c)
+                        if lst:
+                            _, c = lst[0]
+                            intersect_wp.set_clue(c)
+                        intersect_wp.set_instantiated(True)
 
 
     else:
@@ -519,11 +524,109 @@ def instantiate_wordpattern(pattern, results, tileDict, wordPatterns, intersecti
                     intersect_wp.set_freedom(freedom)
                     if ratio == 1 and not intersect_wp.is_instantiated():
                         lst = query_wordpattern(intersect_wp, regex)
-                        _, c = lst[0]
-                        intersect_wp.set_clue(c)
+                        if lst:
+                            _, c = lst[0]
+                            intersect_wp.set_clue(c)
+                        intersect_wp.set_instantiated(True)
 
     pattern.set_instantiated(True)
     return True
 
+def find_Solution(tiling):
+    '''
+    <<<<<<<<<<<<<<<<<<Call BoardGenerator Functions: Generate Crossword Here>>>>>>>>>>>>>>>>>>>>
+    '''
+    # Analysis Dict
+    backtrack_count = 0
+    # list of all patterns being considered in queries and their results
+    infoList = []
 
+    # list containing (word, clue)
+    clues = []
 
+    '''
+        Find all Word Patterns
+    '''
+    wordPatterns = BoardGenerator.get_wordPatterns(tiling)
+
+    '''
+        Set Freedoms of all word patterns
+    '''
+    set_freedom(wordPatterns)
+
+    if DEBUG: 
+        print("ALL Patterns ...")
+        for wp in wordPatterns:
+            wp.print_pattern()
+            print("-----------------------------")
+
+    '''
+        Create Tile objects for each box
+    '''
+    d = len(tiling)
+
+    if DEBUG:
+        for i in range(d):
+            for j in range(d):
+                print("LOCATION: " + str(i) + ", " + str(j) + " ..... INTERSECTION: " + str(BoardGenerator.determine_intersection(i,j, wordPatterns)))
+
+    tileDict, intersectionDict = BoardGenerator.get_Tiles(tiling, wordPatterns)
+
+    if DEBUG:
+        for tile in tileDict.values():
+            tile.print_tileInfo()
+
+    # print(tileDict)
+    # print(intersectionDict)
+    # print(len(wordPatterns))
+    '''
+        Get the seed for instantiation
+    '''
+    pattern, results = get_seed(wordPatterns, tileDict)
+    seeded = instantiate_wordpattern(pattern, results, tileDict, wordPatterns, intersectionDict, infoList, clues)
+
+    '''
+        Get Board Soution
+    '''
+    if not seeded:
+        print("FAILED TO SEED")
+
+    valid_board = True
+    while valid_board:
+        if len(infoList) == len(wordPatterns):
+            if DEBUG:
+                print("COMPLETED BOARD")
+            break
+        
+        wp, r, s, backtrack_count = choose_wordpattern(wordPatterns, tileDict, intersectionDict, infoList, clues, backtrack_count)
+
+        while wp is None and r is None and s:
+            wp, r, s, backtrack_count = choose_wordpattern(wordPatterns, tileDict, intersectionDict, infoList, clues, backtrack_count)
+            if not infoList:
+                print("INVALID BOARD PART i: NO MORE INFOLISTS")
+                valid_board = False
+                break
+
+        if wp is None and len(r) == 0 and s:
+            if DEBUG:
+                print("COMPLETED SEARCH")
+            break
+        elif wp is None and len(r) == 0 and not s:
+            print("INVALID BOARD PART ii: Ran out of words to use in backtracking")
+            valid_board = False
+            break
+        else:
+            success = instantiate_wordpattern(wp, r, tileDict, wordPatterns, intersectionDict, infoList, clues)
+            success_backtrack = True
+            if not success and len(infoList) > 0: 
+                success_backtrack = backtrack(tileDict, intersectionDict, infoList, clues, backtrack_count)
+            elif not success and not infoList:
+                print("INVALID BOARD PART iii")
+                valid_board = False
+                break
+            if not success_backtrack:
+                print("INVALID BOARD PART iv")
+                valid_board = False
+                break
+
+    return tileDict, wordPatterns, valid_board, backtrack_count
