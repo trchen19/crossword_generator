@@ -79,5 +79,13 @@ def get_tilings(num_tilings, num_rows, num_cols, ratio):
 
     return all_tilings
 
+def gen_valid_tiling(num_rows, num_cols, ratio):
+    done = False
+    while not done:
+        tiling, num_tiles = gen_tiling(num_rows, num_cols, ratio)
+
+        if verify_tiling(tiling, num_tiles):
+            return tiling
+    return None
 
 

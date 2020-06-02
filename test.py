@@ -1,5 +1,5 @@
-f = open("demofile2.txt", "w")
-f.write("Now the file has more content!")
-f.write("\n")
-f.write("HERE'S A SECOND LINE")
-f.close()
+import re
+s = "AVERAGE TIME: 0.00515625, AVERAGE BACKTRACKS: 0.02"
+
+lst = re.split(r', | ', s)
+print(lst)

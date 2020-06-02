@@ -18,10 +18,10 @@ def query_wordpattern(pattern, regex=None):
 
     table = "words_" + str(patternLen)
 
-    sql = "SELECT * FROM "+ table + " ORDER BY RAND() LIMIT 10"
+    sql = "SELECT * FROM "+ table + " ORDER BY RAND() LIMIT 100"
 
     if regex is not None:
-        sql = "SELECT * FROM "+ table + " WHERE term REGEXP '"+ regex + "' ORDER BY RAND() LIMIT 10"
+        sql = "SELECT * FROM "+ table + " WHERE term REGEXP '"+ regex + "' ORDER BY RAND() LIMIT 100"
 
     if DEBUG:
         print()
