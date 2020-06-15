@@ -33,6 +33,7 @@ class Tile:
         self.letter = letter
         self.intersection = intersection
         self.clueNum = clueNum
+        self.user_letter = None
 
     ''''
         Getters
@@ -53,6 +54,9 @@ class Tile:
     def get_tile_clue(self):
         return self.clueNum
 
+    def get_user_letter(self):
+        return self.user_letter
+
     ''''
         Setters
     ''' 
@@ -62,7 +66,16 @@ class Tile:
 
     def set_state(self, bool):
         self.state = bool
+
+    def set_user_letter(self, s):
+        self.user_letter = s
         
+    '''
+        Method for Answer Checking 
+    '''
+    def compare_answer(self):
+        return self.user_letter == self.letter
+    
     '''
         Helper Func for Debugging
     '''

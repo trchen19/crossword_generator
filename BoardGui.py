@@ -3,100 +3,17 @@ import random
 import string
 import UpdateBoard
 import math
-import inputGenerator as inputGenerator
+# import inputGenerator as inputGenerator
 
 DEBUG = False
 PRINT_ANSWER = False
 BOX_SIZE = 20
-
-layout = [
-    [sg.Text('Crossword Puzzle Using PySimpleGUI'), sg.Text('', key='-OUTPUT-')],
-    [sg.Graph((600, 600), (0, 600), (600, 0), key='graph',
-              change_submits=True, drag_submits=False)],
-    [sg.Button('Show Answer'), sg.Button('Exit')]
-]
-
-window = sg.Window('Window Title', layout, finalize=True)
-
-g = window['graph']
+bounds_x = (0,0)
+bounds_y = (0,0)
 
 '''
 <<<<<<<<<<<<<<<<<<Get user input here>>>>>>>>>>>>>>>>>>>>>
 '''
-# tiling = [[1,0,0,0,0,0,1,1,1,0],
-#           [1,0,0,1,0,0,1,0,0,0],
-#           [1,1,1,1,1,1,1,0,0,0],
-#           [1,0,0,1,0,0,0,0,0,0],
-#           [1,0,0,1,1,1,1,0,0,0],
-#           [1,0,0,0,0,1,0,0,0,0],
-#           [0,0,0,0,0,1,0,0,0,0],
-#           [0,0,0,0,0,1,0,0,0,0],
-#           [0,0,0,1,1,1,1,1,0,0],
-#           [0,0,0,0,0,1,0,0,0,0]
-#         ] #Jo's tiling
-
-# tiling = [[1,1,1,1,1],
-#           [1,1,1,1,1],
-#           [1,0,1,1,1],
-#           [1,1,1,1,1],
-#           [1,1,1,1,1]
-#         ]
-
-# tiling = [[1,1,1,1,1],
-#           [1,1,1,1,1],
-#           [1,1,1,1,1],
-#           [1,1,1,1,1],
-#           [1,1,1,1,1]
-#         ]
-
-# tiling = [[1,1,1,1],
-#           [1,1,1,1],
-#           [1,1,1,1],
-#           [1,1,1,1]
-#         ]
-
-# tiling = [[1,1,1,1,1,1,1,1,1,0],
-#           [1,0,0,1,1,1,1,0,1,0],
-#           [1,1,1,0,1,1,1,1,1,0],
-#           [1,0,1,0,0,0,0,0,1,0],
-#           [1,0,1,0,1,1,1,1,1,1],
-#           [1,0,1,0,0,1,0,0,1,1],
-#           [0,1,1,1,0,1,0,0,0,1],
-#           [1,1,1,1,0,1,1,1,1,1],
-#           [1,1,1,1,1,1,1,1,1,0],
-#           [1,0,0,1,0,1,0,0,1,0]
-#         ] 
-
-# tiling = [[1,1,1,1,1,1,1,1,1,0,1,0],
-#           [1,0,0,1,1,1,1,0,1,0,1,0],
-#           [1,1,1,0,1,1,1,1,1,0,1,0],
-#           [1,0,1,0,0,0,0,0,1,0,1,0],
-#           [1,0,1,0,1,1,1,1,1,1,1,0],
-#           [1,0,1,0,0,1,0,0,1,1,1,1],
-#           [0,1,1,1,0,1,0,0,0,1,0,1],
-#           [1,1,1,1,0,1,1,1,1,1,0,1],
-#           [1,1,1,1,1,1,1,1,1,0,0,1],
-#           [1,0,0,1,0,1,0,0,1,0,0,1],
-#           [1,0,0,1,0,1,0,0,1,0,0,1],
-#           [1,0,0,1,0,1,0,0,1,0,0,1]
-#         ] 
-
-# tiling = [ [0,1,1,1,0,1,1,1,1,0,1,1,1,1,0],
-#            [1,1,1,1,0,1,1,1,1,0,1,1,1,1,1],
-#            [1,1,1,1,0,1,1,1,1,0,1,1,1,1,1],
-#            [1,1,1,0,1,1,1,0,1,1,1,0,1,1,1],
-#            [1,1,1,1,1,0,0,0,0,1,1,1,0,0,0],
-#            [0,0,0,1,1,1,0,1,1,1,0,1,1,1,1],
-#            [1,1,1,1,0,1,1,1,1,0,0,1,1,1,1],
-#            [1,1,1,0,0,1,1,1,1,1,0,0,1,1,1],
-#            [1,1,1,1,0,0,1,1,1,1,0,1,1,1,1],
-#            [1,1,1,1,0,1,1,1,0,1,1,1,0,0,0],
-#            [0,0,0,1,1,1,0,0,0,0,1,1,1,1,1],
-#            [1,1,1,0,1,1,1,0,1,1,1,0,1,1,1],
-#            [1,1,1,1,1,0,1,1,1,1,0,1,1,1,1],
-#            [1,1,1,1,1,0,1,1,1,1,0,1,1,1,1],
-#            [0,1,1,1,1,0,1,1,1,1,0,1,1,1,0]
-# ]
 
 tiling = [ [1,1,1,0,1,1,1,1,0,1,1,1,1,1,1],
            [0,1,0,0,1,0,1,0,0,1,0,0,1,0,1],
@@ -114,26 +31,27 @@ tiling = [ [1,1,1,0,1,1,1,1,0,1,1,1,1,1,1],
            [1,0,1,1,1,1,0,0,0,0,1,0,0,1,0]
 ]
 
-# tiling = [  [0,1,0,0,1,1,1,1,1,1,1,0,0,1,0],
-#             [1,1,1,1,0,0,1,0,1,0,0,1,1,1,1],
-#             [0,1,0,1,1,1,1,0,1,1,1,1,0,1,0],
-#             [0,1,1,1,0,0,1,1,1,0,0,1,1,1,0],
-#             [1,0,1,0,1,1,1,0,1,1,1,0,1,0,1],
-#             [1,0,1,0,1,0,0,0,0,0,1,0,1,0,1],
-#             [1,1,1,1,1,0,0,0,0,0,1,1,1,1,1],
-#             [1,0,0,1,0,0,0,0,0,0,0,1,0,0,1],
-#             [1,1,1,1,1,0,0,0,0,0,1,1,1,1,1],
-#             [1,0,1,0,1,0,0,0,0,0,1,0,1,0,1],
-#             [1,0,1,0,1,1,1,0,1,1,1,0,1,0,1],
-#             [0,1,1,1,0,0,1,1,1,0,0,1,1,1,0],
-#             [0,1,0,1,1,1,1,0,1,1,1,1,0,1,0],
-#             [1,1,1,1,0,0,1,0,1,0,0,1,1,1,1],
-#             [0,1,0,0,1,1,1,1,1,1,1,0,0,1,0]
-# ]
 # tiling = inputGenerator.gen_valid_tiling(15,15,0.68)
 
 boardSize = len(tiling)
 tileDict, wordPatterns, valid_board, backtrack_count = UpdateBoard.find_Solution(tiling)
+
+'''
+    Draw the Board With Relevant Metadata 
+'''
+sg.theme('Default1')
+sg.theme_background_color('white')
+sg.theme_element_background_color('white')
+
+layout = [
+    [sg.Text('Generated Crossword:', background_color='#FFFFFF', text_color='black'), sg.Text('', background_color='white', key='-OUTPUT-')],
+    [sg.Graph((600, 600), (0, 600), (600, 0), key='graph',
+              change_submits=True, drag_submits=False)],
+    [sg.Button('Show Answer'), sg.Button('Exit')]
+]
+
+window = sg.Window('Window Title', layout, finalize=True)
+g = window['graph']
 
 # Tiles with letters filled in 
 # Need: tileDict, tiling, wordPatterns, valid_board
@@ -142,17 +60,17 @@ for row in range(len(tiling)):
         currTile = None
         if tiling[row][col]:
             # Draw all white Tiles
-            g.draw_rectangle((col * BOX_SIZE + 5+100, row * BOX_SIZE + 3), (col * BOX_SIZE + BOX_SIZE + 5+100, row * BOX_SIZE + BOX_SIZE + 3), line_color='black')
+            g.draw_rectangle((col * BOX_SIZE + 5+110, row * BOX_SIZE + 3), (col * BOX_SIZE + BOX_SIZE + 5+110, row * BOX_SIZE + BOX_SIZE + 3), line_color='black')
             currTile = tileDict[(row, col)]
             # Draw clue number if needed in a given tile
             # Draw Letters in tiles
             
             if currTile.get_tile_clue() != 0:
                 g.draw_text( str(currTile.get_tile_clue()),
-                            (col * BOX_SIZE + 10+100, row * BOX_SIZE + 8), font='Courier 7')
+                            (col * BOX_SIZE + 10+110, row * BOX_SIZE + 8), font='Courier 7')
         else:
             # Blackout box if not valid tile
-            g.draw_rectangle((col * BOX_SIZE + 5+100, row * BOX_SIZE + 3), (col * BOX_SIZE + BOX_SIZE + 5+100, row * BOX_SIZE + BOX_SIZE + 3), line_color='black', fill_color='black')
+            g.draw_rectangle((col * BOX_SIZE + 5+110, row * BOX_SIZE + 3), (col * BOX_SIZE + BOX_SIZE + 5+110, row * BOX_SIZE + BOX_SIZE + 3), line_color='black', fill_color='black')
 
 
 if valid_board:
@@ -186,16 +104,6 @@ if valid_board:
 else:
     g.draw_text("INVALID BOARD", (267.5, boardSize * BOX_SIZE + 25), font='Courier 18', text_location="center")
 
-if PRINT_ANSWER:
-    for row in range(len(tiling)):
-        for col in range(len(tiling[0])):
-            currTile = None
-            if tiling[row][col]:
-                currTile = tileDict[(row, col)]
-                if currTile.get_tile_letter() is not None:
-                    g.draw_text( str(currTile.get_tile_letter()).lower(),
-                                (col * BOX_SIZE + 18+100, row * BOX_SIZE +17), font='Courier 16')
-
 
 # Start event loop
 while True:             
@@ -213,7 +121,7 @@ while True:
                     currTile = tileDict[(row, col)]
                     if currTile.get_tile_letter() is not None:
                         g.draw_text( str(currTile.get_tile_letter()).lower(),
-                                    (col * BOX_SIZE + 15+100, row * BOX_SIZE +14), font='Courier 12')
+                                    (col * BOX_SIZE + 15+110, row * BOX_SIZE +14), font='Courier 12')
 
     mouse = values['graph']
     print(mouse)
@@ -221,15 +129,15 @@ while True:
     if event == 'graph':
         if mouse == (None, None):
             continue
-        box_x = mouse[0]//BOX_SIZE
-        box_y = mouse[1]//BOX_SIZE
-        letter_location = (box_x * BOX_SIZE + 18, box_y * BOX_SIZE + 17)
+        box_x = (mouse[0]+6)//BOX_SIZE
+        box_y = (mouse[1]-3)//BOX_SIZE
+        letter_location = (box_x * BOX_SIZE + 5, box_y * BOX_SIZE + 13)
         print(box_x, box_y)
         
         # Once box is clicked, prompt user letter input 
         # Then draw desired letter in box 
         # CHOICE: CHECK IF CORRECT LETTER --> DENY IF IN CORRECT or JUST LET IT HAPPEN.... HAVE A SHOW ANSWER OPTION 
         g.draw_text('{}'.format(random.choice(string.ascii_uppercase)),
-                    letter_location, font='Courier 25')
+                    letter_location, font='Courier 12')
 
 window.close()
