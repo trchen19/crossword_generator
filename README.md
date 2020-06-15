@@ -10,9 +10,9 @@ Follow these instructions to run this crossword generator on your local system.
 ##### Packages and Installation
 
 Run in the base directory:
-'''
-pip install -r requirements.txt
-'''
+
+```pip install -r requirements.txt```
+
 
 MySQL Database
 
@@ -23,16 +23,14 @@ This project requires that you have a MySQL Databse.
 To connect your database to this system, input your database name, user, and password in the respective variables at the beginning of UpdateBoard.py and PopulateDB.py. 
 
 After changing your login info, populate your database with the crossword terms and clues by running:
-'''
-python populateDB.py
-'''
+
+```python populateDB.py```
 
 ### Launching the Generator
 
 Simply run:
-'''
-python boardgui.py
-'''
+
+```python boardgui.py```
 
 ## Notes about Experimentation Infrastructure
 The infrastructure for running experiments currently is not linked with the generation system. Connecting the two requires detaching the backend system from the GUI and calling the helper functions in inputGenerator.py. Documentation for experiments that I ran on this system are contained in Crossword_Generation_Experiment_Report.pdf in the testing directory. 
