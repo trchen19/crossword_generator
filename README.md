@@ -14,7 +14,7 @@ Run in the base directory:
 ```pip install -r requirements.txt```
 
 
-MySQL Database
+MySQL Database:
 
 Follow instructions to download a free MySQL database at https://www.mysql.com/downloads/.
 This project requires that you have a MySQL Databse. 
