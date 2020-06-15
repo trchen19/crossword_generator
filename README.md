@@ -35,7 +35,7 @@ python boardgui.py
 '''
 
 ## Notes about Experimentation Infrastructure
-The infrastructure for running experiments currently is not linked with the generation system. Connecting the two requires detaching the backend system from the GUI and calling the helper functions in inputGenerator.py 
+The infrastructure for running experiments currently is not linked with the generation system. Connecting the two requires detaching the backend system from the GUI and calling the helper functions in inputGenerator.py. Documentation for experiments that I ran on this system are contained in Crossword_Generation_Experiment_Report.pdf in the testing directory. 
 
 ## Acknowledgments
 
