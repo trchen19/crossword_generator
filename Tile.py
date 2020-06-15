@@ -74,7 +74,9 @@ class Tile:
         Method for Answer Checking 
     '''
     def compare_answer(self):
-        return self.user_letter == self.letter
+        if self.user_letter is None:
+            return False
+        return self.user_letter.lower() == self.letter.lower()
     
     '''
         Helper Func for Debugging

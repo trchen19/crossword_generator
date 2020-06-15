@@ -56,6 +56,12 @@ def redraw_grid_and_letters(tiling, tile_dict, box_size, text_size, clue_size, g
 
 def check_completion(tile_dict):
     for _, tile in tile_dict.items():
-        if tile.get_tile_letter() != tile.get_user_letter():
+        if not tile.compare_answer():
             return False
     return True
+
+def reset_grid(tiling, box_size, clue_size, tile_dict, graph):
+    for _, tile in tile_dict.items():
+        tile.set_user_letter(None)
+    graph.erase()
+    draw_grid(tiling, box_size, clue_size, tile_dict, graph)

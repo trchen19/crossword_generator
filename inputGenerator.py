@@ -80,12 +80,14 @@ def get_tilings(num_tilings, num_rows, num_cols, ratio):
     return all_tilings
 
 def gen_valid_tiling(num_rows, num_cols, ratio):
+    count = 0
     done = False
-    while not done:
+    while not done and count < 100000:
         tiling, num_tiles = gen_tiling(num_rows, num_cols, ratio)
 
         if verify_tiling(tiling, num_tiles):
             return tiling
+        count += 1
     return None
 
 
