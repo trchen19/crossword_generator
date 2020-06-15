@@ -6,7 +6,6 @@ import math
 import gui_helper as gui_helper
 import inputGenerator as inputGenerator
 from threading import Timer
-# import inputGenerator as inputGenerator
 
 DEBUG = False
 ANSWER_HIDDEN = True
@@ -18,30 +17,6 @@ sg.theme_element_background_color('white')
 '''
 <<<<<<<<<<<<<<<<<<Get user input here>>>>>>>>>>>>>>>>>>>>>
 '''
-
-# tiling = [ [1,1,1,0,1,1,1,1,0,1,1,1,1,1,1],
-#            [0,1,0,0,1,0,1,0,0,1,0,0,1,0,1],
-#            [0,1,0,0,1,0,1,0,0,1,0,0,1,1,1],
-#            [1,1,1,1,1,0,1,1,1,1,1,0,1,0,1],
-#            [1,0,0,1,0,0,1,0,0,1,0,0,1,0,0],
-#            [1,1,1,1,1,1,1,0,0,1,0,1,1,1,1],
-#            [1,0,0,1,0,0,1,1,1,1,0,0,1,0,1],
-#            [1,0,1,1,1,1,1,0,1,0,0,0,1,1,1],
-#            [0,0,0,1,0,0,0,0,1,0,1,0,0,0,1],
-#            [1,0,1,0,0,0,0,0,1,0,1,0,1,0,1],
-#            [1,1,1,1,1,1,0,1,1,1,1,1,1,1,1],
-#            [1,0,1,0,0,1,0,0,1,0,1,0,0,1,0],
-#            [1,0,1,0,0,1,1,1,1,0,1,1,1,1,1],
-#            [1,0,1,1,1,1,0,0,0,0,1,0,0,1,0],
-#            [1,0,1,1,1,1,0,0,0,0,1,0,0,1,0]
-
-# ]
-
-# tiling = [ [1,1,1],
-#             [0,0,0],
-#             [0,0,0]
-# ]
-# tiling = inputGenerator.gen_valid_tiling(15,15,0.68)
 while True:
     regenerate = False
     # Get User Parameters
@@ -52,7 +27,7 @@ while True:
             size=(18,15),
             orientation='horizontal',
             font=('Courier', 12))],
-        [sg.Text("Diffculty: ", background_color='#FFFFFF', text_color='black'), sg.Combo(['Easy', 'Medium', 'Hard'])],
+        [sg.Text("Difficulty: ", background_color='#FFFFFF', text_color='black'), sg.Combo(['Easy', 'Medium', 'Hard'])],
         [sg.Submit(), sg.Cancel()]
     ]
 

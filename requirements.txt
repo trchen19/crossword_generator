@@ -1,0 +1,4 @@
+PySimpleGUI==4.19.0
+numpy==1.18.3
+mysql-connector-python==8.0.19
+ 
